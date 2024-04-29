@@ -1,0 +1,37 @@
+/* item-list-styles.css */
+.item-list-container {
+  width: 100%;
+}
+
+.item-list-table {
+  table-layout: fixed; /* Sikrer fast bredde på kolonnene */
+}
+
+.table-header-row, .item-row, .details-row {
+  text-align: center;
+}
+
+.header-gjenstander, .header-informasjon, .item-data, .info-data {
+  width: 50%;
+  font-size: large;
+}
+
+.details-button {
+  background-color: #000000; /* Custom Purple */
+  color: black;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 2px;
+}
+
+.collapse-container {
+  padding: 0;
+  margin: 0;
+}
+
+.rule-view-container {
+  border-width: 1px;
+  border-radius: md;
+  margin-top: 2px;
+  width: 100%;
+}
