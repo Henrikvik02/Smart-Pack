@@ -29,13 +29,13 @@ const NavBar = () => {
 
         <HStack spacing={8}>
           <Button as={RouterLink} to="/" variant="ghost">
-            Home
+            Hjem
           </Button>
           <Button as={RouterLink} to="/SmartPack" variant="ghost">
-            About
+            SmartPack
           </Button>
           <Button as={RouterLink} to="/BaggageGrid" variant="ghost">
-            Contact
+            Informasjon
           </Button>
         </HStack>
 

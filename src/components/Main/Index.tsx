@@ -19,7 +19,7 @@ const Index = () => {
     >
       <Card color="third" isLink={true}>
         <Link
-          to="/BaggageGrid"
+          to="/SmartPack"
           style={{ textDecoration: "none", color: "inherit" }}
         >
           {" "}

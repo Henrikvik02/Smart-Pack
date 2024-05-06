@@ -5,10 +5,13 @@ import { useEffect, useState } from "react";
 import BaggageGrid from "./components/Main/BaggageGrid";
 import Index from "./components/Main/Index";
 import Chat from "./components/Main/Chat";
+import Sidebar from "./components/Main/Sidebar";
 import Footer from "./components/Footer/Footer";
 import CategoryCreateForm from "./components/Category/CategoryCreateForm";
 import "@digdir/designsystemet-theme";
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import ContextProvider from "./Context/ContextProvider";
+
 
 
 
@@ -17,15 +20,38 @@ function App() {
 
   return (
     <>
-    <Router>
+    <ContextProvider>
+     <Router>
+      <Grid
+        templateAreas={{
+          base: '"nav" "main" "footer"',
+        }}
+        gap={6}
+        className="app-grid"
+      >
+        <GridItem area="nav">
           <NavBar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/smartpack" element={<Chat />} />
-              <Route path="/baggagegrid" element={<BaggageGrid />} />
-            </Routes>
-          </Router>
-        <Footer />
+        </GridItem>
+        <GridItem area="main" px={15} py={20}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route
+              path="/smartpack"
+                element={
+                  <div>
+                    <Sidebar />
+                    <Chat />
+                  </div>
+                        }/>
+            <Route path="/baggagegrid" element={<BaggageGrid />} />
+          </Routes>
+        </GridItem>
+        <GridItem area="footer">
+          <Footer />
+        </GridItem>
+      </Grid>
+    </Router>
+    </ContextProvider>
     </>
   );
 }
