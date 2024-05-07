@@ -31,9 +31,8 @@ const CategoryCard = ({ category, onClick }: Props) => {
       borderColor="customPurple.500"
       borderRadius="lg"
       overflow="hidden"
-      bg={cardBackground}
+      varient="{cardButton}"
       shadow="md"
-      _hover={{ shadow: "lg" }}
       textAlign="center"
       width="120px"
       height="auto"
