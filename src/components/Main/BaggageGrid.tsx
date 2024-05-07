@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import {
   Box,
   Container,
@@ -22,6 +22,18 @@ const BaggageGrid = () => {
     string | null
   >(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const contentAreaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (selectedCategoryName && contentAreaRef.current) {
+      setTimeout(() => {
+        if (contentAreaRef.current) { // Check again to ensure ref is not null
+          contentAreaRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100); // Delay the scroll to allow the content to render
+    }
+  }, [selectedCategoryName]);
+  
 
   return (
     <Box width="full" height="full" className="baggage-grid-container">
@@ -59,6 +71,7 @@ const BaggageGrid = () => {
                   setSelectedCategoryId(category.kategoriid);
                   setSelectedCategoryName(category.kategorinavn);
                   setSearchQuery(""); // Clear search query when a category is selected
+                  
                 }}
               />
             ))}
@@ -76,7 +89,7 @@ const BaggageGrid = () => {
           mb={10}
           className="selected-category-display"
         >
-          <VStack spacing={2} width="full" className="selected-category-info">
+          <VStack ref={contentAreaRef} spacing={2} width="full" className="selected-category-info">
             <Text
               fontSize="xl"
               fontWeight="semibold"
@@ -88,7 +101,6 @@ const BaggageGrid = () => {
             <Text
               fontSize="2xl"
               fontWeight="bold"
-              bgClip="text"
               textAlign="center"
               className="selected-category-name"
             >
