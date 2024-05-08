@@ -6,6 +6,15 @@ import { Link } from "react-router-dom";
 
 import suitcase from "/logo/suitcase.jpg";
 import smartpackSketch from "/logo/smartpack-sketch.jpg";
+import {
+  Card as ChakraCard,
+  Button,
+  CardBody,
+  CardFooter,
+  Stack,
+  Text,
+  Image,
+} from "@chakra-ui/react";
 
 const Index = () => {
   return (

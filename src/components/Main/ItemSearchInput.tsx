@@ -1,4 +1,10 @@
-import { Flex, InputGroup, InputLeftElement, Input, IconButton } from "@chakra-ui/react";
+import {
+  Flex,
+  InputGroup,
+  InputLeftElement,
+  Input,
+  IconButton,
+} from "@chakra-ui/react";
 import { SearchIcon, CloseIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
@@ -10,22 +16,18 @@ const ItemSearchInput = ({ onSearch }: ItemSearchInputProps) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    onSearch(e.target.value);
+    const inputValue = e.target.value; // Preserve the user's casing
+    setInputValue(inputValue); // Update state with the input as typed
+    onSearch(inputValue.toLowerCase()); // Convert to lowercase for case-insensitive search
   };
 
   const clearInput = () => {
     setInputValue("");
-    onSearch("");
+    onSearch(""); // Clear the search
   };
 
   return (
-    <Flex
-      width="full" // Full width of the parent component
-      justifyContent="center" // Horizontally center the content
-      alignItems="center" // Vertically center the content
-      p={4} // Padding around to avoid looking squished
-    >
+    <Flex width="full" justifyContent="center" alignItems="center" p={4}>
       <Flex maxWidth="500px" width="full" alignItems="center">
         <InputGroup>
           <InputLeftElement pointerEvents="none">
@@ -36,19 +38,19 @@ const ItemSearchInput = ({ onSearch }: ItemSearchInputProps) => {
             value={inputValue}
             onChange={handleInputChange}
             borderColor="#84216B"
-            borderRadius="md" // Rounded corners for the input field
+            borderRadius="md"
           />
         </InputGroup>
         {inputValue && (
           <IconButton
-            aria-label="Klarer søkefelt"
-            variant="danger"
+            aria-label="Clear search field"
+            variant="ghost"
             icon={<CloseIcon />}
             onClick={clearInput}
-            colorScheme="danger"
+            colorScheme="red"
             size="sm"
-            marginLeft={2} // Margin to separate button from input
-            borderRadius="md" // Rounded corners for the button
+            marginLeft={2}
+            borderRadius="md"
           />
         )}
       </Flex>
