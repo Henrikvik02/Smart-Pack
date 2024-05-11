@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../services/api-client';
+import { apiClient } from '../services/api-client';
 import { Item } from '../services/object-service';
 
-// Define the return type explicitly for clarity
 type UseSearchedItemsResult = {
   items: Item[];
   isLoading: boolean;
@@ -10,31 +9,29 @@ type UseSearchedItemsResult = {
 };
 
 const useSearchedItems = (query: string): UseSearchedItemsResult => {
-  const [items, setItems] = useState<Item[]>([]); // Definerer state for items
-  const [isLoading, setIsLoading] = useState(false); // Definerer state for isLoading
-  const [error, setError] = useState<string | null>(null); // Definerer state for error
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("Search query in hook:", query); // Logg den aktuelle søkestrengen
-    if (!query) {
-      setItems([]); // Tømmer items hvis søkestrengen er tom
+    if (!query.trim()) {
+      setItems([]);  // Clear items when the search query is empty
       return;
     }
 
-    setIsLoading(true); // Setter isLoading til true mens data lastes
-    apiClient.get<Item[]>(`/gjenstander?gjenstandnavn=${encodeURIComponent(query)}`)
+    setIsLoading(true);
+    apiClient.get<Item[]>(`/gjenstander/navn/${encodeURIComponent(query)}`)
       .then(response => {
-        console.log("Data received:", response.data); // Logg data mottatt fra serveren
-        setItems(response.data); // Oppdaterer items med data mottatt
-        setIsLoading(false); // Setter isLoading til false etter data er mottatt
+        setItems(response.data);
+        setIsLoading(false);
       })
       .catch(err => {
         console.error("Error fetching items:", err);
-        setError(err.message); // Setter error hvis det oppstår en feil
-        setIsLoading(false); // Setter isLoading til false hvis det oppstår en feil
+        setError('Error fetching items: ' + err.message);
+        setIsLoading(false);
       });
 
-  }, [query]); // useEffect vil re-kjøre hver gang query endres
+  }, [query]);  // Dependency array includes query to re-run the effect when query changes
 
   return { items, isLoading, error };
 };

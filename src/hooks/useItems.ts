@@ -1,43 +1,45 @@
 import { useEffect, useState } from "react";
-import apiClient from "../services/api-client";
+import { apiClient } from "../services/api-client";
 import { Item } from "../services/object-service";
 
-type UseItemsResult = [Item[], string, boolean];
+// Extends to include isLoading for better UI handling
+type UseItemsResult = {
+  items: Item[];
+  error: string;
+  isLoading: boolean;
+};
 
-const useItems = (kategoriid: number | null, query: string = ""): UseItemsResult => {
-  const [gjenstander, setGjenstander] = useState<Item[]>([]);
+const useItems = (kategoriid: number | null): UseItemsResult => {
+  const [items, setItems] = useState<Item[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!kategoriid) return; // If no category ID is set, no API call is made
-
-    const params = {
-      kategoriid: kategoriid,
-      ...(query && { q: query }) // Include query parameter if it exists
-    };
+    if (kategoriid === null) {
+      setItems([]); // Optionally clear items when no category is selected
+      return; // Exit if no category ID is provided
+    }
 
     setIsLoading(true);
-    apiClient
-      .get<Item[]>(`/gjenstander`, { params })
-      .then((res) => {
-        setGjenstander(res.data);
-        setError(""); // Clear any existing errors on successful fetch
+    apiClient.get<Item[]>(`/gjenstander/${kategoriid}`) // Adjusted to use dynamic segment
+      .then(response => {
+        setItems(response.data); // Update items from the response
+        setError(""); // Reset error state on successful fetch
       })
-      .catch((err) => {
-        setError(err.message);
+      .catch(error => {
+        setError(error.response?.data?.message || "Unable to fetch items"); // Use error message from response if available
       })
       .finally(() => {
-        setIsLoading(false);
+        setIsLoading(false); // Ensure loading state is reset
       });
 
-    // Cleanup function to potentially cancel the request if needed
+    // Cleanup function to handle component unmount
     return () => {
-      setIsLoading(false); // Ensure loading state is reset when component unmounts or dependencies change
+      setIsLoading(false); // Reset loading state when dependencies change
     };
-  }, [kategoriid, query]); // Add query as a dependency
+  }, [kategoriid]); // Dependency on kategoriid only
 
-  return [gjenstander, error, isLoading];
+  return { items, error, isLoading };
 };
 
 export default useItems;

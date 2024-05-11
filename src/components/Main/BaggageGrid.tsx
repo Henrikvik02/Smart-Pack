@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Container,
@@ -14,26 +14,23 @@ import SearchedItemList from "./Lists/SearchedItemList";
 import ItemSearchInput from "./ItemSearchInput";
 
 const BaggageGrid = () => {
-  const [categories] = useCategories();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
-  const [selectedCategoryName, setSelectedCategoryName] = useState<
-    string | null
-  >(null);
+  const { categories, isLoading, error } = useCategories();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedCategoryDescription, setSelectedCategoryDescription] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const contentAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (selectedCategoryName && contentAreaRef.current) {
-      setTimeout(() => {
-        if (contentAreaRef.current) { // Check again to ensure ref is not null
-          contentAreaRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100); // Delay the scroll to allow the content to render
+        setTimeout(() => {
+            contentAreaRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
     }
   }, [selectedCategoryName]);
-  
+
+  if (isLoading) return <Box>Loading...</Box>;
+  if (error) return <Box>Error: {error}</Box>;
 
   return (
     <Box width="full" height="full" className="baggage-grid-container">
@@ -70,8 +67,8 @@ const BaggageGrid = () => {
                 onClick={() => {
                   setSelectedCategoryId(category.kategoriid);
                   setSelectedCategoryName(category.kategorinavn);
+                  setSelectedCategoryDescription(category.kategoribeskrivelse);
                   setSearchQuery(""); // Clear search query when a category is selected
-                  
                 }}
               />
             ))}
@@ -105,6 +102,13 @@ const BaggageGrid = () => {
               className="selected-category-name"
             >
               {selectedCategoryName}
+            </Text>
+            <Text
+              fontSize="md"
+              textAlign="center"
+              className="selected-category-description"
+            >
+              {selectedCategoryDescription}
             </Text>
             {selectedCategoryId && <ItemList kategoriid={selectedCategoryId} />}
           </VStack>

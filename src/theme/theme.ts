@@ -69,9 +69,6 @@ const theme = extendTheme({
       },
     },
     IconButton: {
-      baseStyle: {
-        color: 'white',  // Apply white color directly to icon
-      },
       variants: {
         solid: {
           bg: 'customPurple.500',
