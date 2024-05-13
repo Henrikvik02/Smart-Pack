@@ -1,16 +1,16 @@
 import { useState, useCallback } from 'react';
 import { apiClient } from "../services/api-client";
-import { Item } from "../services/object-service";
+import { Item, CreateItem, UpdateItem } from "../services/object-service";
 
 type UseItemsResult = {
     items: Item[];
     loading: boolean;
     error: string | null;
     loadAllItems: () => Promise<void>;
-    createItem: (item: Item) => Promise<void>;
+    createItem: (itemData: CreateItem) => Promise<void>;
     readItem: (id: number) => Promise<Item | undefined>;
     readItemsByCategoryId: (kategoriid: number) => Promise<void>;
-    updateItem: (item: Item) => Promise<void>;
+    updateItem: (id: number, itemData: UpdateItem) => Promise<void>;
     deleteItem: (id: number) => Promise<void>;
 };
 
@@ -31,10 +31,10 @@ export const useItems = (): UseItemsResult => {
         }
     }, []);
 
-    const createItem = useCallback(async (item: Item) => {
+    const createItem = useCallback(async (itemData: CreateItem) => {
         setLoading(true);
         try {
-            const response = await apiClient.post<Item>('/gjenstander/', item);
+            const response = await apiClient.post<Item>('/gjenstander/', itemData);
             setItems(prevItems => [...prevItems, response.data]);
         } catch (err: any) {
             setError(err.message || 'Failed to create item');
@@ -68,11 +68,11 @@ export const useItems = (): UseItemsResult => {
         }
     }, []);
 
-    const updateItem = useCallback(async (item: Item) => {
+    const updateItem = useCallback(async (id: number, itemData: UpdateItem) => {
         setLoading(true);
         try {
-            await apiClient.put<Item>(`/gjenstander/update/${item.gjenstandid}`, item);
-            setItems(prevItems => prevItems.map(i => i.gjenstandid === item.gjenstandid ? item : i));
+            await apiClient.put<Item>(`/gjenstander/update/${id}`, itemData);
+            setItems(prevItems => prevItems.map(item => item.gjenstandid === id ? {...item, ...itemData} : item));
         } catch (err: any) {
             setError(err.message || 'Failed to update item');
         } finally {

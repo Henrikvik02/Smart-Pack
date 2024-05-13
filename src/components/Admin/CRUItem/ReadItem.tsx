@@ -9,15 +9,17 @@ import {
   Text
 } from '@chakra-ui/react';
 
-import { Item } from '../../../services/object-service';
-
 interface ReadItemProps {
   isOpen: boolean;
   onClose: () => void;
-  item: Item;
+  itemDetails: {
+    gjenstandnavn: string;
+    gjenstandbeskrivelse: string;
+    kategoriid?: number; 
+  };
 }
 
-const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, item }) => {
+const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, itemDetails }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -26,9 +28,15 @@ const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, item }) => {
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Text fontWeight="bold">Name:</Text>
-          <Text mb={4}>{item.gjenstandnavn}</Text>
+          <Text mb={4}>{itemDetails.gjenstandnavn}</Text>
           <Text fontWeight="bold">Description:</Text>
-          <Text>{item.gjenstandbeskrivelse}</Text>
+          <Text>{itemDetails.gjenstandbeskrivelse}</Text>
+          {itemDetails.kategoriid && (
+            <>
+              <Text fontWeight="bold">Category ID:</Text>
+              <Text>{itemDetails.kategoriid}</Text>
+            </>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>

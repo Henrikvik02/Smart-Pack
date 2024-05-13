@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -11,37 +11,57 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useToast
-} from '@chakra-ui/react';
-
-import { CreateItem } from '../../../services/object-service';
+  useToast,
+  Select,
+} from "@chakra-ui/react";
+import { Category } from "../../../services/object-service";
 
 interface CreateItemProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (itemData: CreateItem) => void;
-  kategoriid?: number;
+  onCreate: (itemData: {
+    gjenstandnavn: string;
+    gjenstandbeskrivelse: string;
+    kategoriid: number;
+  }) => void;
+  categories: Category[];
 }
 
-const CreateItem: React.FC<CreateItemProps> = ({ isOpen, onClose, onCreate, kategoriid }) => {
-  const [gjenstandnavn, setGjenstandnavn] = useState('');
-  const [gjenstandbeskrivelse, setGjenstandbeskrivelse] = useState('');
+const CreateItem: React.FC<CreateItemProps> = ({
+  isOpen,
+  onClose,
+  onCreate,
+  categories,
+}) => {
+  const [gjenstandnavn, setGjenstandnavn] = useState("");
+  const [gjenstandbeskrivelse, setGjenstandbeskrivelse] = useState("");
+  const [selectedKategoriId, setSelectedKategoriId] = useState<number>(0);
   const toast = useToast();
 
   const handleCreate = () => {
-    onCreate({
-      gjenstandnavn,
-      gjenstandbeskrivelse,
-      kategoriid: kategoriid!
-    });
-    toast({
-      title: 'Item created',
-      description: 'The item was successfully created.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true
-    });
-    onClose();
+    if (gjenstandnavn && gjenstandbeskrivelse && selectedKategoriId) {
+      onCreate({
+        gjenstandnavn,
+        gjenstandbeskrivelse,
+        kategoriid: selectedKategoriId,
+      });
+      toast({
+        title: "Gjenstand opprettet.",
+        description: "Ny gjenstand ble vellykket lagt til.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } else {
+      toast({
+        title: "Validation Error",
+        description: "Please fill all required fields including category.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -53,11 +73,32 @@ const CreateItem: React.FC<CreateItemProps> = ({ isOpen, onClose, onCreate, kate
         <ModalBody pb={6}>
           <FormControl isRequired>
             <FormLabel>Item Name</FormLabel>
-            <Input value={gjenstandnavn} onChange={(e) => setGjenstandnavn(e.target.value)} placeholder="Enter item name" />
+            <Input
+              value={gjenstandnavn}
+              onChange={(e) => setGjenstandnavn(e.target.value)}
+              placeholder="Enter item name"
+            />
           </FormControl>
           <FormControl mt={4} isRequired>
             <FormLabel>Item Description</FormLabel>
-            <Input value={gjenstandbeskrivelse} onChange={(e) => setGjenstandbeskrivelse(e.target.value)} placeholder="Enter item description" />
+            <Input
+              value={gjenstandbeskrivelse}
+              onChange={(e) => setGjenstandbeskrivelse(e.target.value)}
+              placeholder="Enter item description"
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Category</FormLabel>
+            <Select
+              placeholder="Select category"
+              onChange={(e) => setSelectedKategoriId(Number(e.target.value))}
+            >
+              {categories.map((category) => (
+                <option key={category.kategoriid} value={category.kategoriid}>
+                  {category.kategorinavn}
+                </option>
+              ))}
+            </Select>
           </FormControl>
         </ModalBody>
         <ModalFooter>

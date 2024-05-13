@@ -25,13 +25,13 @@ export interface Item {
 export interface CreateItem {
     gjenstandnavn: string;
     gjenstandbeskrivelse: string;
-    kategoriid: number;
+    kategoriid?: number;
 }
 
 export interface UpdateItem {
     gjenstandnavn: string;
     gjenstandbeskrivelse: string;
-    kategoriid: number;
+    kategoriid?: number;
 }
 
 export interface Rule {

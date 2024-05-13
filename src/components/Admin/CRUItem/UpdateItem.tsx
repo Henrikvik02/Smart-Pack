@@ -10,29 +10,37 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input
+  Input,
+  useToast
 } from '@chakra-ui/react';
-
-import { Item, UpdateItem } from '../../../services/object-service';
 
 interface UpdateItemProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdate: (id: number, itemData: UpdateItem) => void;
-  item: Item;
+  onUpdate: (id: number, itemData: { gjenstandnavn: string; gjenstandbeskrivelse: string; kategoriid?: number; }) => void;
+  item: { gjenstandid: number; gjenstandnavn: string; gjenstandbeskrivelse: string; kategoriid?: number; };
 }
 
 const UpdateItem: React.FC<UpdateItemProps> = ({ isOpen, onClose, onUpdate, item }) => {
   const [gjenstandnavn, setGjenstandnavn] = useState(item.gjenstandnavn);
   const [gjenstandbeskrivelse, setGjenstandbeskrivelse] = useState(item.gjenstandbeskrivelse);
+  const toast = useToast();
 
   const handleUpdate = () => {
     onUpdate(item.gjenstandid, {
       gjenstandnavn,
       gjenstandbeskrivelse,
-      kategoriid: item.kategoriid
+      kategoriid: item.kategoriid // Pass kategoriid if it's available, it may be undefined which is handled by optional chaining
+    });
+    toast({
+      title: "Gjenstand opprettet.",
+      description: "Ny gjenstand ble vellykket lagt til.",
+      status: "success",
+      duration: 5000,
+      isClosable: true,
     });
     onClose();
+    
   };
 
   return (

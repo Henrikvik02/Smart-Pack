@@ -1,78 +1,30 @@
+// AdminPage.tsx
 import React, { useState } from 'react';
 import {
   Box,
   Button,
   VStack,
   Heading,
-  Container,
-  useDisclosure
+  Container
 } from '@chakra-ui/react';
-import GenericList from './GenericList';
-import CreateCategory from './CRUCategory/CreateCategory';
-import UpdateCategory from './CRUCategory/UpdateCategory';
-import ReadCategory from './CRUCategory/ReadCategory';
-import useCategoryCRUD from '../../hooks/useCategoriesCRUD';
+import DisplayCat from './Display/DisplayCat';
+import DisplayItem from './Display/DisplayItem';
 
 const AdminPage = () => {
-    const { categories, createCategory, updateCategory, deleteCategory, fetchCategory } = useCategoryCRUD();
-    const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
-    const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
-    const { isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose } = useDisclosure();
-    const [selectedCategory, setSelectedCategory] = useState(null);
-
-    const handleAddCategory = () => {
-        onCreateOpen();
-    };
-
-    const handleViewCategory = async (id: number) => {
-        const category = await fetchCategory(id);
-        setSelectedCategory(category);
-        onViewOpen();
-    };
-
-    const handleEditCategory = async (id: number) => {
-        const category = await fetchCategory(id);
-        setSelectedCategory(category);
-        onUpdateOpen();
-    };
-
-    const handleDeleteCategory = async (id: number) => {
-        if (window.confirm("Er du sikker på at du vil slette denne kategorien?")) {
-            await deleteCategory(id);
-            alert("Category deleted successfully");
-        }
-    };
+    const [activeView, setActiveView] = useState<string>('');
 
     return (
         <Container maxW="container.xl">
             <VStack spacing={4} align="stretch">
                 <Heading mb={6}>Admin Dashboard</Heading>
                 <Box display="flex" justifyContent="space-between">
-                    <Button colorScheme="blue" onClick={handleAddCategory}>Legg til Ny Kategori</Button>
+                    <Button colorScheme="blue" onClick={() => setActiveView('Categories')}>Kategorier</Button>
+                    <Button onClick={() => setActiveView('Items')}>Gjenstander</Button>
+                    <Button onClick={() => setActiveView('Rules')}>Regelverker</Button>
                 </Box>
 
-                <Box mt={10}>
-                    <GenericList
-                        items={categories.map(cat => ({ id: cat.kategoriid, name: cat.kategorinavn }))}
-                        onAdd={handleAddCategory}
-                        onEdit={handleEditCategory}
-                        onDelete={handleDeleteCategory}
-                        onView={handleViewCategory}
-                        title="Kategorier"
-                    />
-                </Box>
-
-                {isCreateOpen && (
-                    <CreateCategory onClose={onCreateClose} onCreate={createCategory} isOpen={isCreateOpen} />
-                )}
-
-                {isUpdateOpen && selectedCategory && (
-                    <UpdateCategory category={selectedCategory} onClose={onUpdateClose} onUpdate={updateCategory} isOpen={isUpdateOpen} />
-                )}
-
-                {isViewOpen && selectedCategory && (
-                    <ReadCategory isOpen={isViewOpen} onClose={onViewClose} category={selectedCategory} />
-                )}
+                {activeView === 'Categories' && <DisplayCat />}
+                {activeView === 'Items' && <DisplayItem />}
             </VStack>
         </Container>
     );

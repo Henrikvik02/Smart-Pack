@@ -50,18 +50,32 @@ const GenericList: React.FC<GenericListProps> = ({ items, onAdd, onEdit, onDelet
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <ListItem display="flex" justifyContent="space-between" alignItems="center">
-              <Box flex="1" onClick={() => toggleSubList(item.id)}>
+              <Box flex="1">
                 {item.name}
-                <IconButton
-                  aria-label="Expand"
-                  icon={openSubLists.has(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                  onClick={() => toggleSubList(item.id)}
-                />
               </Box>
               <Box>
-                <IconButton aria-label="View" icon={<ViewIcon />} onClick={() => onView(item.id)} />
-                <IconButton aria-label="Edit" icon={<EditIcon />} onClick={() => onEdit(item.id)} />
-                <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => onDelete(item.id)} />
+                {item.subItems && item.subItems.length > 0 && (
+                  <IconButton
+                    aria-label="Expand"
+                    icon={openSubLists.has(item.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSubList(item.id);
+                    }}
+                  />
+                )}
+                <IconButton aria-label="View" icon={<ViewIcon />} onClick={(e) => {
+                  e.stopPropagation();
+                  onView(item.id);
+                }} />
+                <IconButton aria-label="Edit" icon={<EditIcon />} onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item.id);
+                }} />
+                <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item.id);
+                }} />
               </Box>
             </ListItem>
             {item.subItems && openSubLists.has(item.id) && (
@@ -77,3 +91,4 @@ const GenericList: React.FC<GenericListProps> = ({ items, onAdd, onEdit, onDelet
 };
 
 export default GenericList;
+

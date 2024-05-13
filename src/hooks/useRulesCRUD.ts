@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { apiClient } from "../services/api-client";
-import { Rule, RuleTag } from "../services/object-service";
+import { CreateRuleTag, Rule, RuleTag } from "../services/object-service";
 
 type UseRulesCRUDResult = {
   rules: Rule[];
@@ -12,7 +12,7 @@ type UseRulesCRUDResult = {
   getRulesByCategoryId: (kategoriid: number) => Promise<void>;
   updateRule: (rule: Rule) => Promise<void>;
   deleteRule: (id: number) => Promise<void>;
-  linkRuleToItem: (tag: RuleTag) => Promise<void>;
+  linkRuleToItem: (tag: CreateRuleTag) => Promise<void>;
   unlinkRuleFromItem: (tagId: number) => Promise<void>;
   getRulesByItemId: (gjenstandid: number) => Promise<void>;
 };
@@ -95,7 +95,7 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
-  const linkRuleToItem = useCallback(async (tag: RuleTag) => {
+  const linkRuleToItem = useCallback(async (tag: CreateRuleTag) => {
     try {
       await apiClient.post('/regelverktag/', tag);
     } catch (err: any) {
