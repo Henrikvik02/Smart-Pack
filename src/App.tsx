@@ -7,10 +7,10 @@ import Index from "./components/Main/Index";
 import Chat from "./components/Main/Chat";
 import Sidebar from "./components/Main/Sidebar";
 import Footer from "./components/Footer/Footer";
-import CategoryCreateForm from "./components/Category/CategoryCreateForm";
 import "@digdir/designsystemet-theme";
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import ContextProvider from "./Context/ContextProvider";
+import AdminPage from "./components/Admin/AdminPage";
 
 
 
@@ -33,7 +33,7 @@ function App() {
           <NavBar />
         </GridItem>
         <GridItem area="main" px={15} py={20}>
-          <BaggageGrid />
+          <AdminPage />
         </GridItem>
         <GridItem area="footer">
           <Footer />

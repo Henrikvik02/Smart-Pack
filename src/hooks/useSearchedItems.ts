@@ -20,7 +20,7 @@ const useSearchedItems = (query: string): UseSearchedItemsResult => {
     }
 
     setIsLoading(true);
-    apiClient.get<Item[]>(`/gjenstander/navn/${encodeURIComponent(query)}`)
+    apiClient.get<Item[]>(`/gjenstander/read/navn/${encodeURIComponent(query)}`)
       .then(response => {
         setItems(response.data);
         setIsLoading(false);

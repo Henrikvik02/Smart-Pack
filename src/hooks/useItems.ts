@@ -21,7 +21,7 @@ const useItems = (kategoriid: number | null): UseItemsResult => {
     }
 
     setIsLoading(true);
-    apiClient.get<Item[]>(`/gjenstander/${kategoriid}`) // Adjusted to use dynamic segment
+    apiClient.get<Item[]>(`/gjenstander/read/kategori/${kategoriid}`) // Adjusted to use dynamic segment
       .then(response => {
         setItems(response.data); // Update items from the response
         setError(""); // Reset error state on successful fetch

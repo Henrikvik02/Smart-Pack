@@ -20,7 +20,7 @@ const useCategories = (): UseCategoriesResult => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        apiClient.get<Category[]>("/kategorier/")
+        apiClient.get<Category[]>("/kategorier/read/")
         .then((res) => {
             const categoriesWithLogo = res.data.map(category => ({
                 ...category,

@@ -10,7 +10,7 @@ const useRuleTags = (gjenstandid: number) => {
   useEffect(() => {
     // Function to fetch rules related to an item
     const fetchRegelverker = () => {
-      apiClient.get<Rule[]>(`/regelverker/${gjenstandid}`)
+      apiClient.get<Rule[]>(`/regelverker/read/${gjenstandid}`)
         .then(response => {
           setRegelverker(response.data); // Set the rules directly from response
         })
