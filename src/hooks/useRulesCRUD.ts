@@ -14,6 +14,7 @@ type UseRulesCRUDResult = {
   deleteRule: (id: number) => Promise<void>;
   linkRuleToItem: (tag: RuleTag) => Promise<void>;
   unlinkRuleFromItem: (tagId: number) => Promise<void>;
+  getRulesByItemId: (gjenstandid: number) => Promise<void>;
 };
 
 export const useRulesCRUD = (): UseRulesCRUDResult => {
@@ -110,5 +111,17 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
-  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem };
+  const getRulesByItemId = useCallback(async (gjenstandid: number) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get<Rule[]>(`/regelverker/read/${gjenstandid}`);
+      setRules(response.data);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch rules for the item');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem, getRulesByItemId };
 };

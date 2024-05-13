@@ -22,6 +22,18 @@ export interface Item {
     gjenstandbeskrivelse: string;
 }
 
+export interface CreateItem {
+    gjenstandnavn: string;
+    gjenstandbeskrivelse: string;
+    kategoriid: number;
+}
+
+export interface UpdateItem {
+    gjenstandnavn: string;
+    gjenstandbeskrivelse: string;
+    kategoriid: number;
+}
+
 export interface Rule {
     regelverkid: number,
     kategoriid: number,
@@ -32,8 +44,31 @@ export interface Rule {
     regelverkbeskrivelse: string,
 }
 
+export interface CreateRule {
+    kategoriid: number,
+    betingelse: string,
+    verdi: string,
+    tillatthandbagasje: boolean,
+    tillattinnsjekketbagasje: boolean,
+    regelverkbeskrivelse: string,
+}
+
+export interface UpdateRule {
+    kategoriid: number,
+    betingelse: string,
+    verdi: string,
+    tillatthandbagasje: boolean,
+    tillattinnsjekketbagasje: boolean,
+    regelverkbeskrivelse: string,
+}
+
 export interface RuleTag {
+    regelverktagid: number;
     gjenstandid: number;
     regelverkid: number;
-    regelverktagid: number;
+}
+
+export interface CreateRuleTag {
+    gjenstandid: number;
+    regelverkid: number;
 }
