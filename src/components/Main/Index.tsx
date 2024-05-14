@@ -1,69 +1,93 @@
 import React from "react";
-import "@digdir/designsystemet-theme";
-import "@digdir/designsystemet-css";
-import { Card, Heading, Paragraph } from "@digdir/designsystemet-react";
 import { Link } from "react-router-dom";
-
-import suitcase from "/logo/suitcase.jpg";
-import smartpackSketch from "/logo/smartpack-sketch.jpg";
 import {
-  Card as ChakraCard,
+  Card,
   Button,
   CardBody,
   CardFooter,
   Stack,
   Text,
   Image,
+  Heading,
 } from "@chakra-ui/react";
+
+import suitcase from "/logo/suitcase.jpg";
+import smartpackSketch from "/logo/smartpack-sketch.jpg";
 
 const Index = () => {
   return (
-    <div
-      style={{
-        display: "grid",
-        gap: "var(--fds-spacing-4)",
-        gridTemplateColumns: "repeat(2, 300px)",
-        justifyContent: "center",
-      }}
-    >
-      <Card color="third" isLink={true}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <Card
+        direction={{ base: "column", sm: "row" }}
+        overflow="hidden"
+        variant="outline"
+      >
         <Link
           to="/SmartPack"
-          style={{ textDecoration: "none", color: "inherit" }}
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            display: "flex",
+            alignItems: "center",
+          }}
         >
-          {" "}
-          {/* Ensuring the Link has no text decoration and inherits text color */}
-          <Card.Media>
-            <img alt="SmartPack" src={smartpackSketch} />
-          </Card.Media>
-          <Card.Header>
-            <Heading size="small">SmartPack</Heading>
-          </Card.Header>
-          <Card.Content>
-            Lurer du på noe angående bagasje? Hvor mye væske kan jeg ta med? Får
-            jeg hesten min gjennom bagasjebåndet? Spør vår chatbot SmartPack!
-          </Card.Content>
-          <Card.Footer></Card.Footer>
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src={smartpackSketch}
+            alt="SmartPack"
+          />
+          <Stack flex="1">
+            <CardBody>
+              <Heading size="md">SmartPack</Heading>
+              <Text py="2">
+                Lurer du på noe angående bagasje? Hvor mye væske kan jeg ta med?
+                Får jeg hesten min gjennom bagasjebåndet? Spør vår chatbot
+                SmartPack!
+              </Text>
+            </CardBody>
+            <CardFooter>
+              <Button variant="solid" colorScheme="blue">
+                Learn More
+              </Button>
+            </CardFooter>
+          </Stack>
         </Link>
       </Card>
-      <Card color="third" isLink>
+      <Card
+        direction={{ base: "column", sm: "row" }}
+        overflow="hidden"
+        variant="outline"
+      >
         <Link
           to="/BaggageGrid"
-          style={{ textDecoration: "none", color: "inherit" }}
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            display: "flex",
+            alignItems: "center",
+          }}
         >
-          {" "}
-          {/* Ensuring the Link has no text decoration and inherits text color */}
-          <Card.Media>
-            <img alt="Informasjon" src={suitcase} />
-          </Card.Media>
-          <Card.Header>
-            <Heading size="small">Informasjon</Heading>
-          </Card.Header>
-          <Card.Content>
-            Trykk her for å lese mer om bagasje. Utfylte tabeller med all
-            informasjonen du trenger for din flytur.
-          </Card.Content>
-          <Card.Footer></Card.Footer>
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src={suitcase}
+            alt="Informasjon"
+          />
+          <Stack flex="1">
+            <CardBody>
+              <Heading size="md">Informasjon</Heading>
+              <Text py="2">
+                Trykk her for å lese mer om bagasje. Utfylte tabeller med all
+                informasjonen du trenger for din flytur.
+              </Text>
+            </CardBody>
+            <CardFooter>
+              <Button variant="solid" colorScheme="blue">
+                More Info
+              </Button>
+            </CardFooter>
+          </Stack>
         </Link>
       </Card>
     </div>

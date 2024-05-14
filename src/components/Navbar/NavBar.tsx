@@ -3,7 +3,6 @@ import {
   Image,
   Box,
   Button,
-  Spacer,
   Menu,
   MenuButton,
   MenuList,
@@ -20,12 +19,14 @@ import { Link as RouterLink } from "react-router-dom";
 import "./NavBar.css";
 
 const NavBar = () => {
-  // Responsive display settings
+  const { colorMode } = useColorMode(); // Directly access color mode
   const displayNavButtons = useBreakpointValue({ base: "none", md: "flex" });
   const displayMenu = useBreakpointValue({ base: "flex", md: "none" });
 
-  const bg = useColorModeValue("gray.100", "gray.700"); // Dynamisk bakgrunnsfarge basert på fargemodus
-  const shadow = useColorModeValue("sm", "lg"); // Mykere skygge i lys modus, sterkere i mørk modus
+  const bg = useColorModeValue("gray.100", "gray.700");
+  const shadow = useColorModeValue("sm", "lg");
+
+  const buttonTextColor = colorMode === "dark" ? "white" : "black"; // Determine button text color
 
   return (
     <Box as="nav" className="navbar" bg={bg} boxShadow={shadow}>
@@ -36,7 +37,7 @@ const NavBar = () => {
         width="full"
         mx="auto"
         px="5"
-        justifyContent={{ base: "space-between", md: "space-between" }} // Ensures items are spaced out
+        justifyContent={{ base: "space-between", md: "space-between" }}
       >
         <Image className="logo-image" src={logo} />
 
@@ -51,6 +52,8 @@ const NavBar = () => {
               to="/"
               className="nav-button"
               variant="navHeader"
+              colorScheme="gray"
+              color={buttonTextColor} // Apply text color
             >
               Hjem
             </Button>
@@ -59,6 +62,8 @@ const NavBar = () => {
               to="/SmartPack"
               className="nav-button"
               variant="navHeader"
+              colorScheme="gray"
+              color={buttonTextColor} // Apply text color
             >
               SmartPack
             </Button>
@@ -67,6 +72,8 @@ const NavBar = () => {
               to="/BaggageGrid"
               className="nav-button"
               variant="navHeader"
+              colorScheme="gray"
+              color={buttonTextColor} // Apply text color
             >
               Informasjon
             </Button>
@@ -74,7 +81,6 @@ const NavBar = () => {
         </Box>
 
         <Box display={displayMenu} ml="auto" mr={4}>
-          {" "}
           <Menu>
             <MenuButton
               as={IconButton}

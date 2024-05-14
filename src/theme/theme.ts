@@ -55,7 +55,7 @@ const theme = extendTheme({
           },
         },
         cardButton: {
-          borderWidth: '4x',
+          borderWidth: '4px',
           borderColor: 'customPurple.500',
           bg: 'customGray.500',
           color: 'black',
@@ -71,7 +71,7 @@ const theme = extendTheme({
         },
         navHeader: {
           color: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'white' : 'black'),
-          bg: 'transparent',
+            bg: 'transparent',
           _hover: {
             bg: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'customGray.400' : 'customGray.600'),
           },

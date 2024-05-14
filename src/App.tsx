@@ -32,15 +32,7 @@ function App() {
             <GridItem area="main" px={15} py={20}>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route
-                  path="/smartpack"
-                  element={
-                    <div>
-                      <Sidebar />
-                      <Chat />
-                    </div>
-                  }
-                />
+                <Route path="/smartpack" element={<Chat />} />
                 <Route path="/baggagegrid" element={<BaggageGrid />} />
               </Routes>
             </GridItem>
