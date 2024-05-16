@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from "../services/api-client";
 import { Category, CreateCategoryData, UpdateCategoryData } from "../services/object-service";
 
@@ -7,7 +7,7 @@ const useCategoryCRUD = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const fetchCategories = () => {
+    const fetchCategories = useCallback(() => {
         setLoading(true);
         apiClient.get('/kategorier/read/')
             .then(response => {
@@ -18,7 +18,7 @@ const useCategoryCRUD = () => {
                 setError(`Fetching error: ${err.message}`);
                 setLoading(false);
             });
-    };
+    }, []);
 
     const fetchCategory = (kategoriid: number) => {
         setLoading(true);
@@ -66,10 +66,10 @@ const useCategoryCRUD = () => {
     };
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
+        fetchCategories(); 
+    }, [fetchCategories]);
 
-    return { categories, fetchCategory, createCategory, updateCategory, deleteCategory, loading, error };
+    return { categories, fetchCategories , fetchCategory, createCategory, updateCategory, deleteCategory, loading, error };
 };
 
 export default useCategoryCRUD;

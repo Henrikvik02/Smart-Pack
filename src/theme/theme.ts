@@ -52,7 +52,7 @@ const theme = extendTheme({
           },
         },
         cardButton: {
-          borderWidth: '4x',  // Thick border
+          borderWidth: '4x',  // Thick border.
           borderColor: 'customPurple.500',
           bg: 'customGray.500',
           color: 'black',  // Set text color to black

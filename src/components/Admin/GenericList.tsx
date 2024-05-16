@@ -7,15 +7,9 @@ import {
   ListItem,
   IconButton,
   Collapse,
-  useDisclosure
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon, ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-
-interface Entity {
-  id: number;
-  name: string;
-  subItems?: Entity[]; // Optional sub-items
-}
+import { Entity } from '../../services/object-service';
 
 interface GenericListProps {
   items: Entity[];
@@ -27,7 +21,15 @@ interface GenericListProps {
   renderSubList?: (subItems: Entity[]) => JSX.Element; // Function to render sublist
 }
 
-const GenericList: React.FC<GenericListProps> = ({ items, onAdd, onEdit, onDelete, onView, title, renderSubList }) => {
+const GenericList: React.FC<GenericListProps> = ({
+  items,
+  onAdd,
+  onEdit,
+  onDelete,
+  onView,
+  title,
+  renderSubList,
+}) => {
   const [openSubLists, setOpenSubLists] = useState<Set<number>>(new Set()); // Tracks open sublists
 
   const toggleSubList = (id: number) => {
@@ -50,7 +52,7 @@ const GenericList: React.FC<GenericListProps> = ({ items, onAdd, onEdit, onDelet
         {items.map((item) => (
           <React.Fragment key={item.id}>
             <ListItem display="flex" justifyContent="space-between" alignItems="center">
-              <Box flex="1">
+              <Box flex="1" onClick={() => item.subItems && item.subItems.length ? toggleSubList(item.id) : onView(item.id)}>
                 {item.name}
               </Box>
               <Box>
@@ -91,4 +93,3 @@ const GenericList: React.FC<GenericListProps> = ({ items, onAdd, onEdit, onDelet
 };
 
 export default GenericList;
-

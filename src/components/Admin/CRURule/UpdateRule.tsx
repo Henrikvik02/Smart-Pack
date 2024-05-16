@@ -11,19 +11,35 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Switch
+  Switch,
+  Select
 } from '@chakra-ui/react';
-
-import { Rule, UpdateRule } from '../../../services/object-service';
+import { Category } from '../../../services/object-service';
 
 interface UpdateRuleProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdate: (ruleData: UpdateRule) => void;
-  rule: Rule;
+  onUpdate: (regelverkid: number, ruleData: {
+    kategoriid: number,
+    betingelse: string,
+    verdi: string,
+    tillatthandbagasje: boolean,
+    tillattinnsjekketbagasje: boolean,
+    regelverkbeskrivelse: string
+  }) => void;
+  rule: {
+    regelverkid: number,
+    kategoriid: number,
+    betingelse: string,
+    verdi: string,
+    tillatthandbagasje: boolean,
+    tillattinnsjekketbagasje: boolean,
+    regelverkbeskrivelse: string
+  };
+  categories: Category[];
 }
 
-const UpdateRule: React.FC<UpdateRuleProps> = ({ isOpen, onClose, onUpdate, rule }) => {
+const UpdateRule: React.FC<UpdateRuleProps> = ({ isOpen, onClose, onUpdate, rule, categories }) => {
   const [kategoriid, setKategoriid] = useState<number>(rule.kategoriid);
   const [betingelse, setBetingelse] = useState(rule.betingelse);
   const [verdi, setVerdi] = useState(rule.verdi);
@@ -32,7 +48,7 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({ isOpen, onClose, onUpdate, rule
   const [regelverkbeskrivelse, setRegelverkbeskrivelse] = useState(rule.regelverkbeskrivelse);
 
   const handleUpdate = () => {
-    onUpdate({
+    onUpdate(rule.regelverkid, {
       kategoriid,
       betingelse,
       verdi,
@@ -51,8 +67,14 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({ isOpen, onClose, onUpdate, rule
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl isRequired>
-            <FormLabel>Category ID</FormLabel>
-            <Input type="number" value={kategoriid} onChange={(e) => setKategoriid(Number(e.target.value))} />
+            <FormLabel>Category</FormLabel>
+            <Select value={kategoriid} onChange={(e) => setKategoriid(Number(e.target.value))}>
+              {categories.map((cat) => (
+                <option key={cat.kategoriid} value={cat.kategoriid}>
+                  {cat.kategorinavn}
+                </option>
+              ))}
+            </Select>
           </FormControl>
           <FormControl mt={4} isRequired>
             <FormLabel>Condition</FormLabel>

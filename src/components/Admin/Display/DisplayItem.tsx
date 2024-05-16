@@ -5,18 +5,32 @@ import {
   Container,
   Heading,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import GenericList from "./../GenericList";
-import CreateItem from "./../CRUItem/CreateItem";
-import ReadItem from "./../CRUItem/ReadItem";
-import UpdateItem from "./../CRUItem/UpdateItem";
-import { useItems } from "../../../hooks/useItemsCRUD";
-import { Item, Category } from "../../../services/object-service";
+import GenericList from "../GenericList";
+import CreateItem from "../CRUItem/CreateItem";
+import ReadItem from "../CRUItem/ReadItem";
+import UpdateItem from "../CRUItem/UpdateItem";
+import ReadRule from "../CRURule/ReadRule";
+import { useItemsCRUD } from "../../../hooks/useItemsCRUD";
+import { Item, Category, Rule } from "../../../services/object-service";
 import useCategoryCRUD from "../../../hooks/useCategoriesCRUD";
+import { useRulesCRUD } from "../../../hooks/useRulesCRUD";
 
 const DisplayItem = () => {
   const { items, createItem, updateItem, deleteItem, readItem, loadAllItems } =
-    useItems();
+    useItemsCRUD();
+  const { categories, fetchCategories } = useCategoryCRUD();
+  const {
+    getRulesByCategoryId,
+    linkRuleToItem,
+    getRulesByItemId,
+    unlinkRuleFromItem,
+    unlinkRuleFromItemWithItemid,
+  } = useRulesCRUD();
+  const [itemRules, setItemRules] = useState<Rule[]>([]);
+  const toast = useToast();
+
   const {
     isOpen: isCreateOpen,
     onOpen: onCreateOpen,
@@ -32,45 +46,168 @@ const DisplayItem = () => {
     onOpen: onViewOpen,
     onClose: onViewClose,
   } = useDisclosure();
+  const {
+    isOpen: isRuleDetailsOpen,
+    onOpen: onRuleDetailsOpen,
+    onClose: onRuleDetailsClose,
+  } = useDisclosure();
+
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-  const { categories } = useCategoryCRUD();
+  const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
+  const [categoryRules, setCategoryRules] = useState<Rule[]>([]);
+  const [selectedRuleIds, setSelectedRuleIds] = useState<number[]>([]);
+  const onOpenUpdateModal = () => {
+    onUpdateOpen();
+  };
 
   useEffect(() => {
-    loadAllItems(); // Forsikre deg om at denne funksjonen kaller API og setter data
-  }, [loadAllItems]); // Avhengighet sikrer at den ikke kjøres mer enn nødvendig
-
-  const handleAddItem = () => {
-    onCreateOpen();
-  };
+    fetchCategories();
+    loadAllItems();
+  }, []);
 
   const handleViewItem = async (id: number) => {
     const item = await readItem(id);
-    if (item !== undefined) {
+    if (item) {
       setSelectedItem(item);
+      getRulesByItemId(item.gjenstandid) // Forsikrer oss om at vi venter på dataen
+        .then((rules) => {
+          if (rules.length > 0) {
+            setItemRules(rules);
+          } else {
+            setItemRules([]); // Setter tom liste om det ikke er regler
+            toast({
+              title: "Info",
+              description: "No rules found for this item.",
+              status: "info",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => {
+          toast({
+            title: "Error loading rules",
+            description: error.message || "Unable to fetch rules.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+          setItemRules([]); // Tømmer regler hvis det er en feil
+        });
       onViewOpen();
     } else {
-      alert("Item not found");
-      setSelectedItem(null);
+      toast({
+        title: "Error",
+        description: "Item not found",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
-  const handleEditItem = async (id: number) => {
-    const item = await readItem(id);
-    if (item !== undefined) {
-      setSelectedItem(item);
-      onUpdateOpen();
+  const handleAddItem = async (selectedCategoryId: number) => {
+    if (selectedCategoryId) {
+      const rules = await getRulesByCategoryId(selectedCategoryId);
+      setCategoryRules(rules);
+    }
+    onCreateOpen();
+  };
+
+  const handleUpdateItem = async (
+    id: number,
+    itemData: {
+      gjenstandnavn: string;
+      gjenstandbeskrivelse: string;
+      kategoriid: number;
+    },
+    selectedRuleIds: number[]
+  ) => {
+    try {
+      await updateItem(id, itemData);
+  
+      const unlinkPromises = itemRules.map(async (rule) => {
+        await unlinkRuleFromItem(id, rule.regelverkid);
+      });
+      await Promise.all(unlinkPromises);
+  
+      const linkPromises = selectedRuleIds.map(async (ruleId) => {
+        await linkRuleToItem({
+          gjenstandid: id,
+          regelverkid: ruleId,
+        });
+      });
+      await Promise.all(linkPromises);
+  
+      toast({
+        title: "Item Updated",
+        description: "Item and rules updated successfully",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onUpdateClose(); // Lukker update-modalen etter vellykket operasjon
+    } catch (error) {
+      toast({
+        title: "Update Error",
+        description: `Update failed:`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+  
+
+  const handleEdit = (id: number) => {
+    const currentItem = items.find((item) => item.gjenstandid === id);
+    if (currentItem) {
+      setSelectedItem(currentItem);
+      onOpenUpdateModal(); // Correctly invoke to open the update modal
     } else {
-      alert("Item not found for editing");
-      setSelectedItem(null);
+      toast({
+        title: "Error",
+        description: "Item not found",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
+  
   const handleDeleteItem = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      await deleteItem(id);
-      alert("Item deleted successfully");
+    if (window.confirm("Are you sure you want to delete this item and all its rules?")) {
+      try {
+        console.log(`Starting to unlink all rules from item ID: ${id}`);
+        await unlinkRuleFromItemWithItemid(id);
+        console.log(`All rules unlinked for item ID: ${id}`);
+  
+        console.log(`Starting to delete item ID: ${id}`);
+        await deleteItem(id);
+        console.log(`Item ID: ${id} deleted`);
+  
+        toast({
+          title: "Item Deleted",
+          description: "Item and all associated rules have been successfully deleted.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error(`Failed to delete item ID: ${id}`, error);
+        toast({
+          title: "Deletion Error",
+          description: `Failed to delete the item and its rules`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     }
   };
+  
+  
 
   return (
     <Container maxW="container.xl">
@@ -80,30 +217,48 @@ const DisplayItem = () => {
           items={items.map((item) => ({
             id: item.gjenstandid,
             name: item.gjenstandnavn,
+            subItems: [],
           }))}
-          onAdd={handleAddItem}
-          onEdit={handleEditItem}
+          onAdd={() => handleAddItem(1)}
+          onEdit={handleEdit}
           onDelete={handleDeleteItem}
           onView={handleViewItem}
           title="Items"
         />
       </Box>
 
-      {isCreateOpen && (
+      {isCreateOpen && selectedItem && (
         <CreateItem
-          onClose={onCreateClose}
-          onCreate={createItem}
           isOpen={isCreateOpen}
+          onClose={onCreateClose}
+          onCreate={(itemData, selectedRuleIds) =>
+            createItem(itemData).then((newItemId) => {
+              selectedRuleIds.forEach(async (ruleId) => {
+                await linkRuleToItem({
+                  gjenstandid: newItemId,
+                  regelverkid: ruleId,
+                });
+              });
+            })
+          }
           categories={categories}
+          rules={categoryRules}
         />
       )}
 
       {isUpdateOpen && selectedItem && (
         <UpdateItem
-          item={selectedItem}
-          onClose={onUpdateClose}
-          onUpdate={updateItem}
           isOpen={isUpdateOpen}
+          onClose={onUpdateClose}
+          onUpdate={(updatedItemData, selectedRuleIds) =>
+            handleUpdateItem(
+              selectedItem.gjenstandid,
+              updatedItemData,
+              selectedRuleIds
+            )
+          }
+          item={selectedItem}
+          categories={categories}
         />
       )}
 
@@ -112,6 +267,17 @@ const DisplayItem = () => {
           isOpen={isViewOpen}
           onClose={onViewClose}
           itemDetails={selectedItem}
+          categories={categories}
+          rules={itemRules}
+        />
+      )}
+
+      {isRuleDetailsOpen && selectedRule && (
+        <ReadRule
+          isOpen={isRuleDetailsOpen}
+          onClose={onRuleDetailsClose}
+          ruleDetails={selectedRule}
+          categories={categories}
         />
       )}
     </Container>
@@ -119,3 +285,6 @@ const DisplayItem = () => {
 };
 
 export default DisplayItem;
+function onOpenUpdateModal() {
+  throw new Error("Function not implemented.");
+}

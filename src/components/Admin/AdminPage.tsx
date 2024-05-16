@@ -9,6 +9,9 @@ import {
 } from '@chakra-ui/react';
 import DisplayCat from './Display/DisplayCat';
 import DisplayItem from './Display/DisplayItem';
+import DisplayRule from './Display/DisplayRule';
+import DisplayCat_It from './Display/DisplayCat_It';
+import DisplayCat_Rul from './Display/DisplayCat_Rul';
 
 const AdminPage = () => {
     const [activeView, setActiveView] = useState<string>('');
@@ -18,12 +21,11 @@ const AdminPage = () => {
             <VStack spacing={4} align="stretch">
                 <Heading mb={6}>Admin Dashboard</Heading>
                 <Box display="flex" justifyContent="space-between">
-                    <Button colorScheme="blue" onClick={() => setActiveView('Categories')}>Kategorier</Button>
+                    <Button onClick={() => setActiveView('Categories_rules')}>Kategorier og regelverk</Button>
                     <Button onClick={() => setActiveView('Items')}>Gjenstander</Button>
-                    <Button onClick={() => setActiveView('Rules')}>Regelverker</Button>
                 </Box>
 
-                {activeView === 'Categories' && <DisplayCat />}
+                {activeView === 'Categories_rules' && <DisplayCat_Rul />}
                 {activeView === 'Items' && <DisplayItem />}
             </VStack>
         </Container>

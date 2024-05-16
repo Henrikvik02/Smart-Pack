@@ -16,6 +16,7 @@ export interface UpdateCategoryData {
 }
 
 export interface Item {
+    id: number;
     gjenstandid: number;
     gjenstandnavn: string;
     kategoriid: number;
@@ -25,13 +26,13 @@ export interface Item {
 export interface CreateItem {
     gjenstandnavn: string;
     gjenstandbeskrivelse: string;
-    kategoriid?: number;
+    kategoriid: number;
 }
 
 export interface UpdateItem {
     gjenstandnavn: string;
     gjenstandbeskrivelse: string;
-    kategoriid?: number;
+    kategoriid: number;
 }
 
 export interface Rule {
@@ -71,4 +72,11 @@ export interface RuleTag {
 export interface CreateRuleTag {
     gjenstandid: number;
     regelverkid: number;
+}
+
+export interface Entity {
+    id: number;
+    name: string;
+    kategoriid?: number;
+    subItems?: Entity[];
 }

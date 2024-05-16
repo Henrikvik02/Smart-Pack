@@ -12,18 +12,19 @@ import {
   FormLabel,
   Input,
   Switch,
+  Select,
   useToast
 } from '@chakra-ui/react';
-
-import { CreateRule } from '../../../services/object-service';
+import { CreateRule, Category } from '../../../services/object-service';
 
 interface CreateRuleProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (ruleData: CreateRule) => void;
+  categories: Category[];
 }
 
-const CreateRule: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate }) => {
+const CreateRuleComponent: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate, categories }) => {
   const [kategoriid, setKategoriid] = useState<number>(0);
   const [betingelse, setBetingelse] = useState('');
   const [verdi, setVerdi] = useState('');
@@ -42,7 +43,7 @@ const CreateRule: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate }) =>
       regelverkbeskrivelse
     });
     toast({
-      title: 'Rule created',
+      title: 'Rule Created',
       description: 'A new rule has been successfully created.',
       status: 'success',
       duration: 5000,
@@ -59,8 +60,14 @@ const CreateRule: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate }) =>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl isRequired>
-            <FormLabel>Category ID</FormLabel>
-            <Input type="number" value={kategoriid} onChange={(e) => setKategoriid(Number(e.target.value))} placeholder="Enter category ID" />
+            <FormLabel>Category</FormLabel>
+            <Select placeholder="Select a category" value={kategoriid} onChange={(e) => setKategoriid(Number(e.target.value))}>
+              {categories.map((category) => (
+                <option key={category.kategoriid} value={category.kategoriid}>
+                  {category.kategorinavn}
+                </option>
+              ))}
+            </Select>
           </FormControl>
           <FormControl mt={4} isRequired>
             <FormLabel>Condition</FormLabel>
@@ -94,4 +101,4 @@ const CreateRule: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate }) =>
   );
 };
 
-export default CreateRule;
+export default CreateRuleComponent;

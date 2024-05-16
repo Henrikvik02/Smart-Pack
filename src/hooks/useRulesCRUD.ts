@@ -1,20 +1,21 @@
 import { useCallback, useState } from 'react';
 import { apiClient } from "../services/api-client";
-import { CreateRuleTag, Rule, RuleTag } from "../services/object-service";
+import { CreateRule, CreateRuleTag, Rule, RuleTag, UpdateRule } from "../services/object-service";
 
 type UseRulesCRUDResult = {
   rules: Rule[];
   loading: boolean;
   error: string | null;
   fetchAllRules: () => Promise<void>;
-  createRule: (rule: Rule) => Promise<void>;
+  createRule: (ruledata: CreateRule) => Promise<void>;
   getRuleById: (id: number) => Promise<Rule | undefined>;
-  getRulesByCategoryId: (kategoriid: number) => Promise<void>;
-  updateRule: (rule: Rule) => Promise<void>;
+  getRulesByCategoryId: (kategoriid: number) => Promise<Rule[]>;
+  updateRule: (regelverkid: number, ruleData: UpdateRule) => Promise<void>;
   deleteRule: (id: number) => Promise<void>;
   linkRuleToItem: (tag: CreateRuleTag) => Promise<void>;
-  unlinkRuleFromItem: (tagId: number) => Promise<void>;
-  getRulesByItemId: (gjenstandid: number) => Promise<void>;
+  unlinkRuleFromItem: (it: number, rul: number) => Promise<void>;
+  unlinkRuleFromItemWithItemid: (it: number,) => Promise<void>;
+  getRulesByItemId: (gjenstandid: number) => Promise<Rule[]>;
 };
 
 export const useRulesCRUD = (): UseRulesCRUDResult => {
@@ -34,10 +35,10 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
-  const createRule = useCallback(async (rule: Rule) => {
+  const createRule = useCallback(async (ruledata: CreateRule) => {
     setLoading(true);
     try {
-      const response = await apiClient.post<Rule>('/regelverker/', rule);
+      const response = await apiClient.post<Rule>('/regelverker/', ruledata);
       setRules(prev => [...prev, response.data]);
     } catch (err: any) {
       setError(err.message || 'Failed to create rule');
@@ -59,23 +60,26 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
-  const getRulesByCategoryId = useCallback(async (kategoriid: number) => {
+  const getRulesByCategoryId = useCallback(async (kategoriid: number): Promise<Rule[]> => {
     setLoading(true);
     try {
       const response = await apiClient.get<Rule[]>(`/regelverker/read/kategori/${kategoriid}`);
       setRules(response.data);
+      return response.data;
     } catch (err: any) {
       setError(err.message || 'Failed to fetch rules by category');
+      return [];  // Returnerer en tom array om det er feil
     } finally {
       setLoading(false);
     }
   }, []);
+  
 
-  const updateRule = useCallback(async (rule: Rule) => {
+  const updateRule = useCallback(async (regelverkid: number, ruleData: UpdateRule) => {
     setLoading(true);
     try {
-      await apiClient.put<Rule>(`/regelverker/update/${rule.regelverkid}`, rule);
-      setRules(prev => prev.map(r => r.regelverkid === rule.regelverkid ? rule : r));
+      await apiClient.put<Rule>(`/regelverker/update/${regelverkid}`, ruleData);
+      setRules(prev => prev.map(rule => rule.regelverkid === regelverkid ? { ...rule, ...ruleData } : rule));
     } catch (err: any) {
       setError(err.message || 'Failed to update rule');
     } finally {
@@ -103,25 +107,39 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
-  const unlinkRuleFromItem = useCallback(async (tagId: number) => {
+  const unlinkRuleFromItem = useCallback(async (it:number, rul:number) => {
     try {
-      await apiClient.delete(`/regelverktag/delete/${tagId}`);
-    } catch (err: any) {
-      setError(err.message || 'Failed to unlink rule from item');
+        await apiClient.delete('/regelverktag/delete', {
+            data: { it, rul }
+        });
+    } catch (err) {
+        setError(error || 'Failed to unlink rule from item');
     }
   }, []);
 
-  const getRulesByItemId = useCallback(async (gjenstandid: number) => {
+  const unlinkRuleFromItemWithItemid = useCallback(async (gjenstandid: number) => {
+    try {
+        await apiClient.delete('/regelverktag/item/delete', {
+            data: { gjenstandid }
+        });
+    } catch (err: any) {
+        setError(err.message || 'Failed to unlink rule from item');
+    }
+  }, []);
+
+  const getRulesByItemId = useCallback(async (it: number): Promise<Rule[]> => {
     setLoading(true);
     try {
-      const response = await apiClient.get<Rule[]>(`/regelverker/read/${gjenstandid}`);
-      setRules(response.data);
+      const response = await apiClient.get<Rule[]>(`/regelverker/read/${it}`);
+      return response.data; // returnerer en liste av regler
     } catch (err: any) {
       setError(err.message || 'Failed to fetch rules for the item');
+      return []; // returnerer tom liste ved feil
     } finally {
       setLoading(false);
     }
-  }, []);
+}, [apiClient, setLoading, setError]);
+  
 
-  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem, getRulesByItemId };
+  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem, unlinkRuleFromItemWithItemid, getRulesByItemId };
 };

@@ -8,33 +8,44 @@ import {
   ModalBody,
   Text
 } from '@chakra-ui/react';
-
-import { Rule } from '../../../services/object-service';
+import { Category } from '../../../services/object-service';
 
 interface ReadRuleProps {
   isOpen: boolean;
   onClose: () => void;
-  rule: Rule;
+  ruleDetails: {
+    betingelse: string;
+    verdi: string;
+    tillatthandbagasje: boolean;
+    tillattinnsjekketbagasje: boolean;
+    regelverkbeskrivelse: string;
+    kategoriid: number;
+  };
+  categories: Category[];
 }
 
-const ReadRule: React.FC<ReadRuleProps> = ({ isOpen, onClose, rule }) => {
+const ReadRule: React.FC<ReadRuleProps> = ({ isOpen, onClose, ruleDetails, categories }) => {
+  const category = categories.find(cat => cat.kategoriid === ruleDetails.kategoriid);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Rule Details</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
+          <Text fontWeight="bold">Category:</Text>
+          <Text mb={4}>{category ? category.kategorinavn : 'Unknown'}</Text>
           <Text fontWeight="bold">Condition:</Text>
-          <Text mb={4}>{rule.betingelse}</Text>
+          <Text mb={4}>{ruleDetails.betingelse}</Text>
           <Text fontWeight="bold">Value:</Text>
-          <Text mb={4}>{rule.verdi}</Text>
+          <Text mb={4}>{ruleDetails.verdi}</Text>
           <Text fontWeight="bold">Allowed in Hand Luggage:</Text>
-          <Text mb={4}>{rule.tillatthandbagasje ? 'Yes' : 'No'}</Text>
+          <Text mb={4}>{ruleDetails.tillatthandbagasje ? 'Yes' : 'No'}</Text>
           <Text fontWeight="bold">Allowed in Checked Luggage:</Text>
-          <Text>{rule.tillattinnsjekketbagasje ? 'Yes' : 'No'}</Text>
+          <Text mb={4}>{ruleDetails.tillattinnsjekketbagasje ? 'Yes' : 'No'}</Text>
           <Text fontWeight="bold">Description:</Text>
-          <Text>{rule.regelverkbeskrivelse}</Text>
+          <Text>{ruleDetails.regelverkbeskrivelse}</Text>
         </ModalBody>
       </ModalContent>
     </Modal>
