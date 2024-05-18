@@ -3,6 +3,8 @@ export interface Category {
     kategorinavn: string;
     kategoribeskrivelse: string;
     logoPath?: string; 
+    subItems?: Entity[];
+    type: 'category';
 }
 
 export interface CreateCategoryData {
@@ -21,6 +23,8 @@ export interface Item {
     gjenstandnavn: string;
     kategoriid: number;
     gjenstandbeskrivelse: string;
+    subItems?: Entity[];
+    type?: 'item';
 }
 
 export interface CreateItem {
@@ -43,6 +47,8 @@ export interface Rule {
     tillatthandbagasje: boolean,
     tillattinnsjekketbagasje: boolean,
     regelverkbeskrivelse: string,
+    subItems?: Entity[];
+    type: 'rule';
 }
 
 export interface CreateRule {
@@ -77,6 +83,13 @@ export interface CreateRuleTag {
 export interface Entity {
     id: number;
     name: string;
+    type: string;
+    subItems: Entity[];
     kategoriid?: number;
-    subItems?: Entity[];
-}
+    gjenstandid?: number;
+    regelverkid?: number;
+    kategorinavn?: string;
+    kategoribeskrivelse?: string;
+  }
+  
+    

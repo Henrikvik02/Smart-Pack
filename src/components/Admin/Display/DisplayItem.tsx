@@ -217,6 +217,7 @@ const DisplayItem = () => {
           items={items.map((item) => ({
             id: item.gjenstandid,
             name: item.gjenstandnavn,
+            type: "items",
             subItems: [],
           }))}
           onAdd={() => handleAddItem(1)}
@@ -285,6 +286,3 @@ const DisplayItem = () => {
 };
 
 export default DisplayItem;
-function onOpenUpdateModal() {
-  throw new Error("Function not implemented.");
-}

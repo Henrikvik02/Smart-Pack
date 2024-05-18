@@ -5,6 +5,7 @@ import {
   Container,
   Heading,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import GenericList from "./../GenericList";
 import CreateRule from "./../CRURule/CreateRule";
@@ -22,6 +23,7 @@ const DisplayRule = () => {
     deleteRule,
     getRuleById,
     fetchAllRules,
+    unlinkRuleFromItemWithRuleid,
   } = useRulesCRUD();
   const { categories } = useCategoryCRUD();
   const {
@@ -40,6 +42,7 @@ const DisplayRule = () => {
     onClose: onViewClose,
   } = useDisclosure();
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     fetchAllRules();
@@ -81,12 +84,34 @@ const DisplayRule = () => {
     }
   };
 
-  const handleDeleteRule = async (id: number) => {
+  const handleDeleteRule = async (regelverkid: number) => {
     if (window.confirm("Are you sure you want to delete this rule?")) {
-      await deleteRule(id);
-      alert("Rule deleted successfully");
+      try {
+        // Unlink the rule from items
+        await unlinkRuleFromItemWithRuleid(regelverkid);
+        
+        // Delete the rule itself
+        await deleteRule(regelverkid);
+        
+        toast({
+          title: "Rule Deleted",
+          description: "Rule and its associations have been deleted successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } catch (error) {
+        toast({
+          title: "Deletion Error",
+          description: `Failed to delete the rule and its associations.`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     }
   };
+  
 
   return (
     <Container maxW="container.xl">
@@ -99,6 +124,8 @@ const DisplayRule = () => {
               categories.find((cat) => cat.kategoriid === rule.kategoriid)
                 ?.kategorinavn || "Unknown Category"
             }`,
+            type: "rule", 
+            subItems: [],
           }))}
           onAdd={handleAddRule}
           onEdit={handleEditRule}

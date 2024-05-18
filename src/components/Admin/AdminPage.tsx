@@ -12,6 +12,7 @@ import DisplayItem from './Display/DisplayItem';
 import DisplayRule from './Display/DisplayRule';
 import DisplayCat_It from './Display/DisplayCat_It';
 import DisplayCat_Rul from './Display/DisplayCat_Rul';
+import DisplayAll from './Display/DisplayAll';
 
 const AdminPage = () => {
     const [activeView, setActiveView] = useState<string>('');
@@ -20,13 +21,20 @@ const AdminPage = () => {
         <Container maxW="container.xl">
             <VStack spacing={4} align="stretch">
                 <Heading mb={6}>Admin Dashboard</Heading>
-                <Box display="flex" justifyContent="space-between">
-                    <Button onClick={() => setActiveView('Categories_rules')}>Kategorier og regelverk</Button>
+                <Box display="flex" justifyContent="center">
+
+                    <Button onClick={() => setActiveView('Everyting')}>Kombinasjon</Button>
+                    <Button onClick={() => setActiveView('Categories')}>Kategorier</Button>
                     <Button onClick={() => setActiveView('Items')}>Gjenstander</Button>
+                    <Button onClick={() => setActiveView('Rules')}>Regelverk</Button>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                    
+                    <DisplayAll />
+                   
+
                 </Box>
 
-                {activeView === 'Categories_rules' && <DisplayCat_Rul />}
-                {activeView === 'Items' && <DisplayItem />}
             </VStack>
         </Container>
     );

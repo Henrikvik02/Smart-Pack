@@ -15,6 +15,7 @@ type UseRulesCRUDResult = {
   linkRuleToItem: (tag: CreateRuleTag) => Promise<void>;
   unlinkRuleFromItem: (it: number, rul: number) => Promise<void>;
   unlinkRuleFromItemWithItemid: (it: number,) => Promise<void>;
+  unlinkRuleFromItemWithRuleid: (it: number,) => Promise<void>;
   getRulesByItemId: (gjenstandid: number) => Promise<Rule[]>;
 };
 
@@ -127,6 +128,17 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
     }
   }, []);
 
+  const unlinkRuleFromItemWithRuleid = useCallback(async (regelverkid: number) => {
+    try {
+        await apiClient.delete('/regelverktag/rule/delete', {
+            data: { regelverkid }
+        });
+    } catch (err: any) {
+        setError(err.message || 'Failed to unlink rule from item');
+    }
+  }, []);
+  
+
   const getRulesByItemId = useCallback(async (it: number): Promise<Rule[]> => {
     setLoading(true);
     try {
@@ -141,5 +153,5 @@ export const useRulesCRUD = (): UseRulesCRUDResult => {
 }, [apiClient, setLoading, setError]);
   
 
-  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem, unlinkRuleFromItemWithItemid, getRulesByItemId };
+  return { rules, loading, error, fetchAllRules, createRule, getRuleById, getRulesByCategoryId, updateRule, deleteRule, linkRuleToItem, unlinkRuleFromItem, unlinkRuleFromItemWithItemid, getRulesByItemId, unlinkRuleFromItemWithRuleid };
 };

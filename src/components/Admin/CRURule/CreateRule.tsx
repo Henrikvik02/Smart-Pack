@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -22,9 +22,10 @@ interface CreateRuleProps {
   onClose: () => void;
   onCreate: (ruleData: CreateRule) => void;
   categories: Category[];
+  selectedCategoryId?: number | number;
 }
 
-const CreateRuleComponent: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate, categories }) => {
+const CreateRuleComponent: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCreate, categories, selectedCategoryId }) => {
   const [kategoriid, setKategoriid] = useState<number>(0);
   const [betingelse, setBetingelse] = useState('');
   const [verdi, setVerdi] = useState('');
@@ -32,6 +33,12 @@ const CreateRuleComponent: React.FC<CreateRuleProps> = ({ isOpen, onClose, onCre
   const [tillattinnsjekketbagasje, setTillattinnsjekketbagasje] = useState(false);
   const [regelverkbeskrivelse, setRegelverkbeskrivelse] = useState('');
   const toast = useToast();
+
+  useEffect(() => {
+    if (selectedCategoryId) {
+      setKategoriid(selectedCategoryId);
+    }
+  }, [selectedCategoryId, isOpen]);
 
   const handleCreate = () => {
     onCreate({
