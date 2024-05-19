@@ -113,13 +113,6 @@ const BaggageGrid = () => {
             >
               {capitalizeFirstLetter(selectedCategoryName)}
             </Text>
-            <Text
-              fontSize="md"
-              textAlign="center"
-              className="selected-category-description"
-            >
-              {selectedCategoryDescription}
-            </Text>
             {selectedCategoryId && <ItemList kategoriid={selectedCategoryId} />}
           </VStack>
         </Flex>
