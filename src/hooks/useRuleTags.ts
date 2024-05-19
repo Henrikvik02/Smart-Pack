@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { Rule, RuleTag } from "../services/object-service";
+import { apiClient } from "../services/api-client"; // Use the apiClient you have set up
+import { Rule } from "../services/object-service";
 
 const useRuleTags = (gjenstandid: number) => {
   const [regelverker, setRegelverker] = useState<Rule[]>([]);
@@ -8,34 +8,26 @@ const useRuleTags = (gjenstandid: number) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Start funksjonen for å hente regelverk tags
-    const fetchRegelverkTags = () => {
-      axios.get<RuleTag[]>(`http://localhost:3001/regelverkTag?gjenstandid=${gjenstandid}`)
-      .then(response => {
-        const regelverkTags = response.data;
-        // Anta at hver get-request returnerer en liste av regelverk, selv om det er bare ett element i listen.
-        const regelverkPromises = regelverkTags.map(tag =>
-          axios.get<Rule[]>(`http://localhost:3001/regelverker?regelverkid=${tag.regelverkid}`)
-        );
-      
-        return Promise.all(regelverkPromises);
-      })
-      .then(regelverkResponses => {
-        // Flatten ut svarene fordi hver respons er en liste av regler.
-        const regelverkerData = regelverkResponses.flatMap(response => response.data);
-        setRegelverker(regelverkerData);
-      })
-      
+    // Function to fetch rules related to an item
+    const fetchRegelverker = () => {
+      apiClient.get<Rule[]>(`/regelverker/read/${gjenstandid}`)
+        .then(response => {
+          setRegelverker(response.data); // Set the rules directly from response
+        })
         .catch(err => {
-          setError('En feil oppsto ved henting av regelverker.');
+          setError('En feil oppsto ved henting av regelverker.'); // Set an error message on failure
         })
         .finally(() => {
-          setIsLoading(false);
+          setIsLoading(false); // Ensure to set loading false after the operation
         });
     };
 
-    // Kaller funksjonen
-    fetchRegelverkTags();
+    // Call the function if gjenstandid is available
+    if (gjenstandid) {
+      fetchRegelverker();
+    } else {
+      setIsLoading(false); // If no gjenstandid is provided, do not perform fetch
+    }
   }, [gjenstandid]);
 
   return { regelverker, isLoading, error };

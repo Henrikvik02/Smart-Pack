@@ -4,6 +4,7 @@ import {
   Image,
   useColorModeValue,
   useBreakpointValue,
+  Text,
 } from "@chakra-ui/react";
 import { Category } from "../../services/object-service";
 
@@ -18,12 +19,8 @@ function capitalizeFirstLetter(string: string) {
 
 const CategoryCard = ({ category, onClick }: Props) => {
   const cardBackground = useColorModeValue("white", "gray.700");
-  const imageSize = useBreakpointValue({
-    base: "50px",
-    sm: "60px",
-    md: "70px",
-    lg: "80px",
-  });
+  const cardSize = useBreakpointValue({ base: "100px", sm: "120px", md: "140px" });  // Dynamic card size
+  const imageSize = useBreakpointValue({ base: "50px", sm: "60px", md: "70px", lg: "80px" });
 
   return (
     <Button
@@ -33,24 +30,31 @@ const CategoryCard = ({ category, onClick }: Props) => {
       overflow="hidden"
       shadow="md"
       textAlign="center"
-      width="120px"
-      height="auto"
+      width={cardSize}
+      height={cardSize}
       onClick={() => onClick(category.kategoriid)}
       padding={2}
       flexDirection="column"
       alignItems="center"
       variant="cardButton"
+      display="flex"
+      flexDir="column"
+      justifyContent="center"
     >
       <Image
         src={category.logoPath || "/fallback-logo-path.webp"}
         alt={`Logo for ${capitalizeFirstLetter(category.kategorinavn)}`}
         boxSize={imageSize}
         objectFit="cover"
-        marginBottom={2}
+        marginBottom="2"
       />
-      <Box color="black" fontSize="sm" isTruncated>
+      <Text
+        fontSize={{ base: "xs", sm: "sm" }}
+        noOfLines={3}
+        wordBreak="break-word"
+      >
         {capitalizeFirstLetter(category.kategorinavn)}
-      </Box>
+      </Text>
     </Button>
   );
 };

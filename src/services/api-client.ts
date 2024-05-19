@@ -1,7 +1,8 @@
+// src/api/api-client.ts
 import axios, { CanceledError } from "axios";
 
-export default axios.create({
-    baseURL: 'http://localhost:3001'
-})
+const apiClient = axios.create({
+    baseURL: 'http://127.0.0.1:8000' 
+});
 
-export { CanceledError };
+export { apiClient, CanceledError };

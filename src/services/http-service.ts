@@ -1,4 +1,4 @@
-import apiClient from "./api-client";
+import { apiClient } from "./api-client";
 
 interface Entity {
   id: string | number;
@@ -11,26 +11,65 @@ class HttpService {
     this.endpoint = endpoint;
   }
 
-  // Henter alle enheter fra en gitt endpoint
-  getAll<T>(): { request: Promise<T[]>, cancel: () => void } {
+  // Fetch all entities from a given endpoint
+  async getAll<T>(): Promise<T[]> {
     const controller = new AbortController();
-    const request = apiClient.get<T[]>(`${this.endpoint}`, { signal: controller.signal });
-    return { request: request.then(res => res.data), cancel: () => controller.abort() };
+    try {
+      const response = await apiClient.get<T[]>(`${this.endpoint}`, { signal: controller.signal });
+      return response.data;  // Assuming the server responds with the array directly
+    } catch (error) {
+      // Handle errors (e.g., network error, server error)
+      throw this.handleError(error);
+    } finally {
+      controller.abort();
+    }
   }
 
-  // Sletter en enhet basert på ID
-  delete(id: string | number) {
-    return apiClient.delete(`${this.endpoint}/${id}`);
+  // Delete an entity based on ID
+  async delete(id: string | number): Promise<void> {
+    try {
+      await apiClient.delete(`${this.endpoint}/${id}`);
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
-  // Oppretter en ny enhet
-  create<T>(entity: T) {
-    return apiClient.post<T, { data: T }>(this.endpoint, entity).then(res => res.data);
+  // Create a new entity
+  async create<T>(entity: T): Promise<T> {
+    try {
+      const response = await apiClient.post<T>(this.endpoint, entity);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
   }
 
-  // Oppdaterer en eksisterende enhet
-  update<T extends Entity>(entity: T) {
-    return apiClient.patch<T, { data: T }>(`${this.endpoint}/${entity.id}`, entity).then(res => res.data);
+  // Update an existing entity
+  async update<T extends Entity>(entity: T): Promise<T> {
+    try {
+      const response = await apiClient.put<T>(`${this.endpoint}/${entity.id}`, entity);
+      return response.data;
+    } catch (error) {
+      throw this.handleError(error);
+    }
+  }
+
+  // Error handling method
+  private handleError(error: any): Error {
+    // Log the error or send it to a monitoring service
+    console.error("API error:", error.response?.data || error.message);
+
+    // Optionally, customize the error message or type based on the error status or response
+    if (error.response) {
+      // Server responded with a status code outside the range of 2xx
+      throw new Error(error.response.data.message || "An unexpected server error occurred");
+    } else if (error.request) {
+      // The request was made but no response was received
+      throw new Error("No response from the server");
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw new Error("Error in setting up the request");
+    }
   }
 }
 

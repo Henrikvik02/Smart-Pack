@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Container,
@@ -18,13 +19,10 @@ function capitalizeFirstLetter(string: string) {
 }
 
 const BaggageGrid = () => {
-  const [categories] = useCategories();
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
-  const [selectedCategoryName, setSelectedCategoryName] = useState<
-    string | null
-  >(null);
+  const { categories, isLoading, error } = useCategories();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const [selectedCategoryDescription, setSelectedCategoryDescription] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const contentAreaRef = useRef<HTMLDivElement | null>(null);
 
@@ -74,6 +72,7 @@ const BaggageGrid = () => {
                 onClick={() => {
                   setSelectedCategoryId(category.kategoriid);
                   setSelectedCategoryName(category.kategorinavn);
+                  setSelectedCategoryDescription(category.kategoribeskrivelse);
                   setSearchQuery(""); // Clear search query when a category is selected
                 }}
               />

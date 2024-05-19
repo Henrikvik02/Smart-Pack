@@ -10,7 +10,6 @@ import {
   IconButton,
   Collapse,
   Text,
-  VStack, // Importert for å stable regelkort
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import useItems from "../../../hooks/useItems";
@@ -21,19 +20,18 @@ interface ItemListProps {
 }
 
 const ItemList = ({ kategoriid }: ItemListProps) => {
-  const [gjenstander, error] = useItems(kategoriid);
+  const { items: gjenstander, isLoading, error } = useItems(kategoriid);
   const [openDetails, setOpenDetails] = useState<number | null>(null);
 
-  const toggleDetails = (id: number) =>
+  const toggleDetails = (id: number) => {
     setOpenDetails(openDetails === id ? null : id);
+  };
 
-  if (error) {
-    return <Text className="error-message">{error}</Text>;
-  }
+  const capitalizeFirstLetter = (string: string) =>
+    string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-  }
+  if (error) return <Text className="error-message">{error}</Text>;
+  if (isLoading) return <Text>Loading items...</Text>;
 
   return (
     <Box width="100%" className="item-list-container">
