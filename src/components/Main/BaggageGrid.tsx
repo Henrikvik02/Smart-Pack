@@ -13,6 +13,10 @@ import ItemList from "./Lists/ItemList";
 import SearchedItemList from "./Lists/SearchedItemList";
 import ItemSearchInput from "./ItemSearchInput";
 
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
 const BaggageGrid = () => {
   const { categories, isLoading, error } = useCategories();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -23,14 +27,14 @@ const BaggageGrid = () => {
 
   useEffect(() => {
     if (selectedCategoryName && contentAreaRef.current) {
-        setTimeout(() => {
-            contentAreaRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+      setTimeout(() => {
+        if (contentAreaRef.current) {
+          // Check again to ensure ref is not null
+          contentAreaRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100); // Delay the scroll to allow the content to render
     }
   }, [selectedCategoryName]);
-
-  if (isLoading) return <Box>Loading...</Box>;
-  if (error) return <Box>Error: {error}</Box>;
 
   return (
     <Box width="full" height="full" className="baggage-grid-container">
@@ -86,7 +90,12 @@ const BaggageGrid = () => {
           mb={10}
           className="selected-category-display"
         >
-          <VStack ref={contentAreaRef} spacing={2} width="full" className="selected-category-info">
+          <VStack
+            ref={contentAreaRef}
+            spacing={2}
+            width="full"
+            className="selected-category-info"
+          >
             <Text
               fontSize="xl"
               fontWeight="semibold"
@@ -101,14 +110,7 @@ const BaggageGrid = () => {
               textAlign="center"
               className="selected-category-name"
             >
-              {selectedCategoryName}
-            </Text>
-            <Text
-              fontSize="md"
-              textAlign="center"
-              className="selected-category-description"
-            >
-              {selectedCategoryDescription}
+              {capitalizeFirstLetter(selectedCategoryName)}
             </Text>
             {selectedCategoryId && <ItemList kategoriid={selectedCategoryId} />}
           </VStack>

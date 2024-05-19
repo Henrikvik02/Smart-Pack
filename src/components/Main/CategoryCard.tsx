@@ -28,7 +28,6 @@ const CategoryCard = ({ category, onClick }: Props) => {
       borderColor="customPurple.500"
       borderRadius="lg"
       overflow="hidden"
-      bg={cardBackground}
       shadow="md"
       textAlign="center"
       width={cardSize}
