@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Container,
@@ -36,6 +35,7 @@ const BaggageGrid = () => {
       }, 100); // Delay the scroll to allow the content to render
     }
   }, [selectedCategoryName]);
+  
 
   return (
     <Box width="full" height="full" className="baggage-grid-container">
@@ -67,7 +67,7 @@ const BaggageGrid = () => {
           >
             {categories.map((category) => (
               <CategoryCard
-                key={category.id}
+                key={category.kategoriid}
                 category={category}
                 onClick={() => {
                   setSelectedCategoryId(category.kategoriid);
@@ -112,6 +112,13 @@ const BaggageGrid = () => {
               className="selected-category-name"
             >
               {capitalizeFirstLetter(selectedCategoryName)}
+            </Text>
+            <Text
+              fontSize="md"
+              textAlign="center"
+              className="selected-category-description"
+            >
+              {selectedCategoryDescription}
             </Text>
             {selectedCategoryId && <ItemList kategoriid={selectedCategoryId} />}
           </VStack>
