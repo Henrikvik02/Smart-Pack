@@ -10,8 +10,6 @@ import {
 import DisplayCat from './Display/DisplayCat';
 import DisplayItem from './Display/DisplayItem';
 import DisplayRule from './Display/DisplayRule';
-import DisplayCat_It from './Display/DisplayCat_It';
-import DisplayCat_Rul from './Display/DisplayCat_Rul';
 import DisplayAll from './Display/DisplayAll';
 
 const AdminPage = () => {
@@ -30,8 +28,7 @@ const AdminPage = () => {
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                     
-                    <DisplayAll />
-                   
+                    <DisplayRule />
 
                 </Box>
 

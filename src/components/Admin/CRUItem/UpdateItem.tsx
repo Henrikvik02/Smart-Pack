@@ -17,10 +17,11 @@ import {
   useToast,
   Box,
   IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Category, Item, Rule } from "../../../services/object-service";
 import { useRulesCRUD } from "../../../hooks/useRulesCRUD";
-import { ViewIcon } from "@chakra-ui/icons";
+import { EditIcon, ViewIcon } from "@chakra-ui/icons";
 import ReadRule from "../CRURule/ReadRule";
 
 interface UpdateItemProps {
@@ -102,7 +103,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
       setCanEditRules(true);
       // Clear the current selections after unlinking
       setSelectedRuleIds([]);
-      
+
       // Reload rules to allow user to select new ones
       const newRules = await getRulesByCategoryId(selectedKategoriId);
       setRules(newRules);
@@ -148,29 +149,31 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
     }
   };
 
+  const modalBg = useColorModeValue("gray.50", "gray.800");
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Update Item</ModalHeader>
+      <ModalContent bg={modalBg}>
+        <ModalHeader>Oppdater gjenstand</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl isRequired>
-            <FormLabel>Item Name</FormLabel>
+            <FormLabel>Navn på gjenstand</FormLabel>
             <Input
               value={gjenstandnavn}
               onChange={(e) => setGjenstandnavn(e.target.value)}
             />
           </FormControl>
           <FormControl mt={4} isRequired>
-            <FormLabel>Item Description</FormLabel>
+            <FormLabel>Beskrivelse av gjenstand</FormLabel>
             <Input
               value={gjenstandbeskrivelse}
               onChange={(e) => setGjenstandbeskrivelse(e.target.value)}
             />
           </FormControl>
           <FormControl mt={4} isRequired>
-            <FormLabel>Category</FormLabel>
+            <FormLabel>Kategori</FormLabel>
             <Select
               value={selectedKategoriId}
               onChange={(e) => setSelectedKategoriId(Number(e.target.value))}
@@ -185,7 +188,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Rules</FormLabel>
+            <FormLabel>Regelverker</FormLabel>
             <Stack spacing={2}>
               {rules.map((rule) => (
                 <Box key={rule.regelverkid} display="flex" alignItems="center">
@@ -196,22 +199,37 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
                       handleViewDetails(rule);
                     }}
                     aria-label="View details"
+                    variant="outline"
+                    colorScheme="blue"
+                    _focus={{
+                      boxShadow: "0 0 0 3px #FFFF10",
+                    }}
                     size="sm"
-                    ml={2}
+                    marginTop="1"
+                    marginLeft="1"
+                    marginRight="4"
                   />
                   <Checkbox
                     isChecked={selectedRuleIds.includes(rule.regelverkid)}
                     onChange={(e) => {
-                      if (canEditRules) {  // Only allow changes if editing is enabled
+                      if (canEditRules) {
+                        // Only allow changes if editing is enabled
                         const index = selectedRuleIds.indexOf(rule.regelverkid);
                         if (index === -1) {
-                          setSelectedRuleIds([...selectedRuleIds, rule.regelverkid]);
+                          setSelectedRuleIds([
+                            ...selectedRuleIds,
+                            rule.regelverkid,
+                          ]);
                         } else {
-                          setSelectedRuleIds(selectedRuleIds.filter(id => id !== rule.regelverkid));
+                          setSelectedRuleIds(
+                            selectedRuleIds.filter(
+                              (id) => id !== rule.regelverkid
+                            )
+                          );
                         }
                       }
                     }}
-                    isDisabled={!canEditRules}  // Disable checkbox based on canEditRules state
+                    isDisabled={!canEditRules} // Disable checkbox based on canEditRules state
                   >
                     {rule.betingelse} - {rule.verdi}
                   </Checkbox>
@@ -219,15 +237,40 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
               ))}
             </Stack>
           </FormControl>
-          <Button mt={4} onClick={handleEditRules}>
-            Edit Rules
-          </Button>
+          <IconButton
+            icon={<EditIcon />}
+            variant="outline"
+            colorScheme="yellow"
+            _focus={{
+              boxShadow: "0 0 0 3px #FFFF10",
+            }}
+            mt={4}
+            onClick={handleEditRules}
+            aria-label={"Edit"}
+          ></IconButton>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
-            Update
+          <Button
+            variant="outline"
+            colorScheme="yellow"
+            _focus={{
+              boxShadow: "0 0 0 3px #FFFF10",
+            }}
+            mr={3}
+            onClick={handleUpdate}
+          >
+            Oppdater
           </Button>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button
+            variant="outline"
+            colorScheme="red"
+            _focus={{
+              boxShadow: "0 0 0 3px #FFFF10",
+            }}
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
 
@@ -239,7 +282,6 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
           categories={categories}
         />
       )}
-
     </Modal>
   );
 };

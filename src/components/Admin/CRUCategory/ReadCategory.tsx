@@ -6,7 +6,8 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  Text
+  Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 interface ReadCategoryProps {
@@ -17,10 +18,10 @@ interface ReadCategoryProps {
 
 const ReadCategory: React.FC<ReadCategoryProps> = ({ isOpen, onClose, category }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Kategoridetaljer</ModalHeader>
+        <ModalHeader>Detaljer på kategorien</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Text fontWeight="bold">Navn:</Text>

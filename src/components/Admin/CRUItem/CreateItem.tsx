@@ -17,6 +17,7 @@ import {
   Select,
   IconButton,
   Box,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 import { Category, Rule } from "../../../services/object-service";
@@ -125,11 +126,11 @@ const CreateItem: React.FC<CreateItemProps> = ({
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Create New Item</ModalHeader>
+          <ModalHeader>Opprett en ny gjenstand</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired>
-              <FormLabel>Item Name</FormLabel>
+              <FormLabel>Navnet på gjenstanden</FormLabel>
               <Input
                 value={gjenstandnavn}
                 onChange={(e) => setGjenstandnavn(e.target.value)}
@@ -137,7 +138,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               />
             </FormControl>
             <FormControl mt={4} isRequired>
-              <FormLabel>Item Description</FormLabel>
+              <FormLabel>Beskrivelse av gjenstanden</FormLabel>
               <Input
                 value={gjenstandbeskrivelse}
                 onChange={(e) => setGjenstandbeskrivelse(e.target.value)}
@@ -145,7 +146,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               />
             </FormControl>
             <FormControl isRequired>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>Tilhørende kategori</FormLabel>
               <Select
                 value={selectedKategoriId ?? ""}
                 onChange={(e) => setSelectedKategoriId(Number(e.target.value))}
@@ -160,16 +161,27 @@ const CreateItem: React.FC<CreateItemProps> = ({
               </Select>
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Rules</FormLabel>
+              <FormLabel>TIlhørende regelverk</FormLabel>
               <Stack spacing={2}>
                 {rules.map((rule) => (
-                  <Box key={rule.regelverkid} display="flex" alignItems="center">
+                  <Box
+                    key={rule.regelverkid}
+                    display="flex"
+                    alignItems="center"
+                  >
                     <IconButton
                       icon={<ViewIcon />}
                       onClick={() => handleViewDetails(rule)}
                       aria-label="View details"
+                      variant="outline"
+                      colorScheme="blue"
+                      _focus={{
+                        boxShadow: "0 0 0 3px #FFFF10",
+                      }}
                       size="sm"
-                      marginLeft="2"
+                      marginTop="1"
+                      marginLeft="1"
+                      marginRight="4"
                     />
                     <Checkbox
                       isChecked={selectedRuleIds.includes(rule.regelverkid)}
@@ -182,7 +194,9 @@ const CreateItem: React.FC<CreateItemProps> = ({
                           ]);
                         } else {
                           setSelectedRuleIds(
-                            selectedRuleIds.filter((id) => id !== rule.regelverkid)
+                            selectedRuleIds.filter(
+                              (id) => id !== rule.regelverkid
+                            )
                           );
                         }
                       }}
@@ -195,10 +209,27 @@ const CreateItem: React.FC<CreateItemProps> = ({
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCreate}>
-              Save
+            <Button
+              variant="outline"
+              colorScheme="green"
+              _focus={{
+                boxShadow: "0 0 0 3px #FFFF10",
+              }}  
+              mr={3}
+              onClick={handleCreate}
+            >
+              Lagre
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button
+              variant="outline"
+              colorScheme="red"
+              _focus={{
+                boxShadow: "0 0 0 3px #FFFF10",
+              }}
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -6,8 +6,10 @@ import {
   List,
   ListItem,
   IconButton,
+  HStack,
+  VStack,
 } from '@chakra-ui/react';
-import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon, ViewIcon, AddIcon } from '@chakra-ui/icons';
 import { Entity } from '../../services/object-service';
 
 interface GenericListProps {
@@ -29,30 +31,61 @@ const GenericList: React.FC<GenericListProps> = ({
 }) => {
   return (
     <Box border="1px" borderColor="gray.200" p={4} borderRadius="md">
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Heading size="md">{title}</Heading>
-        <Button onClick={onAdd}>Legg til Ny</Button>
-      </Box>
+      <HStack justifyContent="space-between" alignItems="center" mb={4}>
+        <Heading size="md" >{title}</Heading>
+        <Button variant="primary" leftIcon={<AddIcon />} onClick={onAdd}>
+          Legg til Ny
+        </Button>
+      </HStack>
       <List spacing={3}>
         {items.map((item) => (
-          <ListItem key={item.id} display="flex" justifyContent="space-between" alignItems="center">
-            <Box flex="1" onClick={() => onView(item.id)}>
-              {item.name}
-            </Box>
-            <Box>
-              <IconButton aria-label="View" icon={<ViewIcon />} onClick={(e) => {
-                e.stopPropagation();
-                onView(item.id);
-              }} />
-              <IconButton aria-label="Edit" icon={<EditIcon />} onClick={(e) => {
-                e.stopPropagation();
-                onEdit(item.id);
-              }} />
-              <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={(e) => {
-                e.stopPropagation();
-                onDelete(item.id);
-              }} />
-            </Box>
+          <ListItem key={item.id} p={2} borderRadius="md">
+            <HStack justifyContent="space-between" alignItems="center">
+              <Box flex="1" cursor="pointer">
+                {item.name}
+              </Box>
+              <HStack spacing={2}>
+                <IconButton
+                  variant="outline"
+                  colorScheme="blue"
+                  aria-label="View"
+                  _focus= {{
+                    boxShadow: '0 0 0 3px #FFFF10',
+                  }}
+                  icon={<ViewIcon />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onView(item.id);
+                  }}
+                />
+                <IconButton
+                  variant="outline"
+                  colorScheme="yellow"
+                  aria-label="Edit"
+                  _focus= {{
+                    boxShadow: '0 0 0 3px #FFFF10',
+                  }}
+                  icon={<EditIcon />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(item.id);
+                  }}
+                />
+                <IconButton
+                  variant="outline"
+                  colorScheme="red"
+                  aria-label="Delete"
+                  _focus= {{
+                    boxShadow: '0 0 0 3px #FFFF10',
+                  }}
+                  icon={<DeleteIcon />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(item.id);
+                  }}
+                />
+              </HStack>
+            </HStack>
           </ListItem>
         ))}
       </List>

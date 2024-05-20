@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -12,10 +12,11 @@ import {
   useDisclosure,
   IconButton,
   Box,
-} from '@chakra-ui/react';
-import { Category, Item, Rule } from '../../../services/object-service';
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { Category, Item, Rule } from "../../../services/object-service";
 import ReadRule from "../CRURule/ReadRule"; // Ensure the path to ReadRule is correct
-import { ViewIcon } from '@chakra-ui/icons';
+import { ViewIcon } from "@chakra-ui/icons";
 
 interface ReadItemProps {
   isOpen: boolean;
@@ -25,11 +26,23 @@ interface ReadItemProps {
   rules: Rule[];
 }
 
-const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, itemDetails, categories, rules }) => {
+const ReadItem: React.FC<ReadItemProps> = ({
+  isOpen,
+  onClose,
+  itemDetails,
+  categories,
+  rules,
+}) => {
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
-  const { isOpen: isRuleDetailsOpen, onOpen: onRuleDetailsOpen, onClose: onRuleDetailsClose } = useDisclosure();
+  const {
+    isOpen: isRuleDetailsOpen,
+    onOpen: onRuleDetailsOpen,
+    onClose: onRuleDetailsClose,
+  } = useDisclosure();
 
-  const category = categories.find(cat => cat.kategoriid === itemDetails.kategoriid);
+  const category = categories.find(
+    (cat) => cat.kategoriid === itemDetails.kategoriid
+  );
 
   const handleViewRuleDetails = (rule: Rule) => {
     setSelectedRule(rule);
@@ -40,16 +53,16 @@ const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, itemDetails, categ
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Item Details</ModalHeader>
+        <ModalHeader>Detaljer på gjenstanden</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <Text fontWeight="bold">Name:</Text>
+          <Text fontWeight="bold">Navn:</Text>
           <Text mb={4}>{itemDetails.gjenstandnavn}</Text>
-          <Text fontWeight="bold">Description:</Text>
+          <Text fontWeight="bold">Beskrivelse:</Text>
           <Text mb={4}>{itemDetails.gjenstandbeskrivelse}</Text>
-          <Text fontWeight="bold">Category:</Text>
-          <Text mb={4}>{category ? category.kategorinavn : 'Unknown'}</Text>
-          <Text fontWeight="bold">Rules:</Text>
+          <Text fontWeight="bold">Kategori:</Text>
+          <Text mb={4}>{category ? category.kategorinavn : "Unknown"}</Text>
+          <Text fontWeight="bold">Regelverker:</Text>
           <List spacing={3}>
             {rules.map((rule) => (
               <Box key={rule.regelverkid} display="flex" alignItems="center">
@@ -60,14 +73,25 @@ const ReadItem: React.FC<ReadItemProps> = ({ isOpen, onClose, itemDetails, categ
                     handleViewRuleDetails(rule);
                   }}
                   aria-label="View details"
+                  variant="outline"
+                  colorScheme="blue"
+                  _focus={{
+                    boxShadow: "0 0 0 3px #FFFF10",
+                  }}
                   size="sm"
-                  ml={4}
+                  marginTop="1"
+                  marginLeft="1"
+                  marginRight="4"
                 />
-                <ListItem key={rule.regelverkid} display="flex" alignItems="center" justifyContent="space-between">
-                {`${rule.betingelse} - ${rule.verdi}`}
-              </ListItem>
+                <ListItem
+                  key={rule.regelverkid}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  {`${rule.betingelse} - ${rule.verdi}`}
+                </ListItem>
               </Box>
-              
             ))}
           </List>
         </ModalBody>

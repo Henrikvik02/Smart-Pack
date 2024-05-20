@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Button, Heading, List, ListItem, IconButton, Collapse, useToast
+  Box, Button, Heading, List, ListItem, IconButton, Collapse, useToast, useColorModeValue, VStack, HStack
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, ViewIcon, ChevronDownIcon, ChevronUpIcon, AddIcon } from '@chakra-ui/icons';
 import { Entity, Category } from '../../services/object-service';
@@ -44,20 +44,19 @@ const FullList: React.FC<GenericListProps> = ({
 }) => {
   const [openIds, setOpenIds] = useState<Set<number>>(new Set());
   const toast = useToast();
+  const subListBgColor = useColorModeValue('customGray.300', 'customGray.600');
 
   const toggleSubList = (id: number, isCategory: boolean) => {
     const updatedOpenIds = new Set(openIds);
     if (updatedOpenIds.has(id)) {
       updatedOpenIds.delete(id);
       if (isCategory) {
-        console.log("Updating selectedCategory in toggleSubList:", undefined);
         setSelectedCategory(null);
       }
     } else {
       updatedOpenIds.add(id);
       if (isCategory) {
         const selected = items.find((category) => category.id === id) as Category;
-        console.log("Updating selectedCategory in toggleSubList:", selected);
         setSelectedCategory(selected);
       }
     }
@@ -70,64 +69,81 @@ const FullList: React.FC<GenericListProps> = ({
 
   return (
     <Box border="1px" borderColor="gray.200" p={4} borderRadius="md">
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <HStack justifyContent="space-between" alignItems="center" mb={4}>
         <Heading size="md">{title}</Heading>
-        <Button leftIcon={<AddIcon />} onClick={onAddCategory}>Legg til Kategori</Button>
-      </Box>
+        <Button variant="primary" leftIcon={<AddIcon />} onClick={onAddCategory}>
+          Legg til Kategori
+        </Button>
+      </HStack>
       <List spacing={3}>
         {items.map((category) => (
           <React.Fragment key={category.id}>
-            <ListItem display="flex" justifyContent="space-between" alignItems="center">
-              <Box flex="1" onClick={() => {
-                onViewCategory(category.id);
-                setSelectedCategory(category as Category);
-              }}>
-                {category.name}
-              </Box>
-              <Box>
-                <IconButton
-                  aria-label="Expand Sublist"
-                  icon={openIds.has(category.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSubList(category.id, true);
-                  }}
-                />
-                <IconButton
-                  aria-label="View"
-                  icon={<ViewIcon />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onViewCategory(category.id);
-                    setSelectedCategory(category as Category);
-                  }}
-                />
-                <IconButton
-                  aria-label="Edit"
-                  icon={<EditIcon />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditCategory(category.id);
-                    setSelectedCategory(category as Category);
-                  }}
-                />
-                <IconButton
-                  aria-label="Delete"
-                  icon={<DeleteIcon />}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteCategory(category.id);
-                    setSelectedCategory(null);
-                  }}
-                />
-              </Box>
+            <ListItem>
+              <HStack justifyContent="space-between" alignItems="center">
+                <Box flex="1" onClick={() => {
+                  onViewCategory(category.id);
+                  setSelectedCategory(category as Category);
+                }}>
+                  {category.name}
+                </Box>
+                <HStack>
+                  <IconButton
+                    variant="primary"
+                    aria-label="Expand Sublist"
+                    icon={openIds.has(category.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSubList(category.id, true);
+                    }}
+                  />
+                  <IconButton
+                    variant="primary"
+                    aria-label="View"
+                    icon={<ViewIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewCategory(category.id);
+                      setSelectedCategory(category as Category);
+                    }}
+                  />
+                  <IconButton
+                    variant="primary"
+                    aria-label="Edit"
+                    icon={<EditIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditCategory(category.id);
+                      setSelectedCategory(category as Category);
+                    }}
+                  />
+                  <IconButton
+                    variant="primary"
+                    aria-label="Delete"
+                    icon={<DeleteIcon />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteCategory(category.id);
+                      setSelectedCategory(null);
+                    }}
+                  />
+                </HStack>
+              </HStack>
             </ListItem>
             {openIds.has(category.id) && (
               <Collapse in={openIds.has(category.id)} animateOpacity>
-                <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" mt={4}>
+                <VStack
+                  border="1px"
+                  borderColor="gray.200"
+                  p={4}
+                  borderRadius="md"
+                  mt={4}
+                  bg={subListBgColor}
+                  align="stretch"
+                >
                   <Heading size="sm" display="flex" alignItems="center">
-                    Rules for {category.name}
+                    Regelverk for {category.name}
                     <IconButton
+                      variant="secondary"
                       ml={2}
                       size="sm"
                       icon={openIds.has(category.id + 1000) ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -138,6 +154,7 @@ const FullList: React.FC<GenericListProps> = ({
                       aria-label="Expand Rules"
                     />
                     <Button
+                      variant="secondary"
                       ml={2}
                       leftIcon={<AddIcon />}
                       size="sm"
@@ -149,45 +166,49 @@ const FullList: React.FC<GenericListProps> = ({
                   <Collapse in={openIds.has(category.id + 1000)} animateOpacity>
                     <List spacing={3} mt={3}>
                       {category.subItems.filter(item => item.type === 'rule').map((rule) => (
-                        <ListItem key={rule.id} display="flex" justifyContent="space-between" alignItems="center">
-                          <Box flex="1" onClick={() => onViewRule(rule.id)}>
-                            {rule.name}
-                          </Box>
-                          <Box>
-                            <IconButton
-                              aria-label="View"
-                              icon={<ViewIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onViewRule(rule.id);
-                              }}
-                            />
-                            <IconButton
-                              aria-label="Edit"
-                              icon={<EditIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEditRule(rule.id);
-                              }}
-                            />
-                            <IconButton
-                              aria-label="Delete"
-                              icon={<DeleteIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDeleteRule(rule.id);
-                              }}
-                            />
-                          </Box>
+                        <ListItem key={rule.id}>
+                          <HStack justifyContent="space-between" alignItems="center">
+                            <Box flex="1" onClick={() => onViewRule(rule.id)}>
+                              {rule.name}
+                            </Box>
+                            <HStack>
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="View"
+                                icon={<ViewIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onViewRule(rule.id);
+                                }}
+                              />
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="Edit"
+                                icon={<EditIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEditRule(rule.id);
+                                }}
+                              />
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="Delete"
+                                icon={<DeleteIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteRule(rule.id);
+                                }}
+                              />
+                            </HStack>
+                          </HStack>
                         </ListItem>
                       ))}
                     </List>
                   </Collapse>
-                </Box>
-                <Box border="1px" borderColor="gray.200" p={4} borderRadius="md" mt={4}>
                   <Heading size="sm" display="flex" alignItems="center">
-                    Items for {category.name}
+                    Gjenstander for {category.name}
                     <IconButton
+                      variant="secondary"
                       ml={2}
                       size="sm"
                       icon={openIds.has(category.id + 2000) ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -198,52 +219,58 @@ const FullList: React.FC<GenericListProps> = ({
                       aria-label="Expand Items"
                     />
                     <Button
+                      variant="secondary"
                       ml={2}
                       leftIcon={<AddIcon />}
                       size="sm"
                       onClick={() => onAddItem(category.id)}
                     >
-                      Legg til Gjenstand
+                      Legg til Element
                     </Button>
                   </Heading>
                   <Collapse in={openIds.has(category.id + 2000)} animateOpacity>
                     <List spacing={3} mt={3}>
                       {category.subItems.filter(item => item.type === 'item').map((item) => (
-                        <ListItem key={item.id} display="flex" justifyContent="space-between" alignItems="center">
-                          <Box flex="1" onClick={() => onViewItem(item.id)}>
-                            {item.name}
-                          </Box>
-                          <Box>
-                            <IconButton
-                              aria-label="View"
-                              icon={<ViewIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onViewItem(item.id);
-                              }}
-                            />
-                            <IconButton
-                              aria-label="Edit"
-                              icon={<EditIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onEditItem(item.id);
-                              }}
-                            />
-                            <IconButton
-                              aria-label="Delete"
-                              icon={<DeleteIcon />}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onDeleteItem(item.id);
-                              }}
-                            />
-                          </Box>
+                        <ListItem key={item.id}>
+                          <HStack justifyContent="space-between" alignItems="center">
+                            <Box flex="1" onClick={() => onViewItem(item.id)}>
+                              {item.name}
+                            </Box>
+                            <HStack>
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="View"
+                                icon={<ViewIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onViewItem(item.id);
+                                }}
+                              />
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="Edit"
+                                icon={<EditIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onEditItem(item.id);
+                                }}
+                              />
+                              <IconButton
+                                variant="tertiary"
+                                aria-label="Delete"
+                                icon={<DeleteIcon />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteItem(item.id);
+                                }}
+                              />
+                            </HStack>
+                          </HStack>
                         </ListItem>
                       ))}
                     </List>
                   </Collapse>
-                </Box>
+                </VStack>
               </Collapse>
             )}
           </React.Fragment>

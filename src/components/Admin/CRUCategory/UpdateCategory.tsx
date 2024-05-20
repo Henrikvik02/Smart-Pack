@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -10,19 +10,34 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input
-} from '@chakra-ui/react';
+  Input,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 interface UpdateCategoryProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdate: (id: number, category: { kategorinavn: string; kategoribeskrivelse: string; }) => void;
-  category: { kategoriid: number; kategorinavn: string; kategoribeskrivelse: string; };
+  onUpdate: (
+    id: number,
+    category: { kategorinavn: string; kategoribeskrivelse: string }
+  ) => void;
+  category: {
+    kategoriid: number;
+    kategorinavn: string;
+    kategoribeskrivelse: string;
+  };
 }
 
-const UpdateCategory: React.FC<UpdateCategoryProps> = ({ isOpen, onClose, onUpdate, category }) => {
+const UpdateCategory: React.FC<UpdateCategoryProps> = ({
+  isOpen,
+  onClose,
+  onUpdate,
+  category,
+}) => {
   const [kategorinavn, setKategorinavn] = useState(category.kategorinavn);
-  const [kategoribeskrivelse, setKategoribeskrivelse] = useState(category.kategoribeskrivelse);
+  const [kategoribeskrivelse, setKategoribeskrivelse] = useState(
+    category.kategoribeskrivelse
+  );
 
   const handleUpdate = () => {
     onUpdate(category.kategoriid, { kategorinavn, kategoribeskrivelse });
@@ -30,28 +45,51 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({ isOpen, onClose, onUpda
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Oppdater Kategori</ModalHeader>
+        <ModalHeader>Oppdater kategori</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl>
-            <FormLabel>Kategorinavn</FormLabel>
-            <Input value={kategorinavn} onChange={(e) => setKategorinavn(e.target.value)} />
+            <FormLabel>Navn på kategorien</FormLabel>
+            <Input
+              value={kategorinavn}
+              onChange={(e) => setKategorinavn(e.target.value)}
+            />
           </FormControl>
 
           <FormControl mt={4}>
-            <FormLabel>Kategoribeskrivelse</FormLabel>
-            <Input value={kategoribeskrivelse} onChange={(e) => setKategoribeskrivelse(e.target.value)} />
+            <FormLabel>Beskrivelse av kategorien</FormLabel>
+            <Input
+              value={kategoribeskrivelse}
+              onChange={(e) => setKategoribeskrivelse(e.target.value)}
+            />
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
+          <Button
+            variant="outline"
+            colorScheme="yellow"
+            _focus={{
+              boxShadow: "0 0 0 3px #FFFF10",
+            }}
+            mr={3}
+            onClick={handleUpdate}
+          >
             Oppdater
           </Button>
-          <Button onClick={onClose}>Avbryt</Button>
+          <Button
+            variant="outline"
+            colorScheme="red"
+            _focus={{
+              boxShadow: "0 0 0 3px #FFFF10",
+            }}
+            onClick={onClose}
+          >
+            Avbryt
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

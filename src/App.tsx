@@ -10,6 +10,7 @@ import Footer from "./components/Footer/Footer";
 import "@digdir/designsystemet-theme";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import ContextProvider from "./Context/ContextProvider";
+import AdminPage from "./components/Admin/AdminPage";
 
 function App() {
   const [kategorier, setKategorier] = useState([]);
@@ -29,11 +30,7 @@ function App() {
               <NavBar />
             </GridItem>
             <GridItem area="main" px={15} py={20}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/smartpack" element={<Chat />} />
-                <Route path="/baggagegrid" element={<BaggageGrid />} />
-              </Routes>
+              <AdminPage/>
             </GridItem>
             <GridItem area="footer">
               <Footer />
