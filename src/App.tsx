@@ -30,7 +30,12 @@ function App() {
               <NavBar />
             </GridItem>
             <GridItem area="main" px={15} py={20}>
-              <AdminPage/>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/smartpack" element={<Chat />} />
+                <Route path="/baggagegrid" element={<BaggageGrid />} />
+                <Route path="/AdminPage" element={<AdminPage />} />
+              </Routes>
             </GridItem>
             <GridItem area="footer">
               <Footer />

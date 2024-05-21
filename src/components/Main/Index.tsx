@@ -13,6 +13,7 @@ import {
 
 import suitcase from "/logo/suitcase.jpg";
 import smartpackSketch from "/logo/smartpack-sketch.jpg";
+import AdminLogo from "/logo/AdminLogo.png";
 
 const Index = () => {
   return (
@@ -35,7 +36,7 @@ const Index = () => {
             objectFit="cover"
             maxW={{ base: "100%", sm: "200px" }}
             src={smartpackSketch}
-            alt="SmartPack"
+            alt="Admin"
           />
           <Stack flex="1">
             <CardBody>
@@ -48,7 +49,7 @@ const Index = () => {
             </CardBody>
             <CardFooter>
               <Button variant="solid" colorScheme="blue">
-                Learn More
+                Trykk her
               </Button>
             </CardFooter>
           </Stack>
@@ -84,7 +85,43 @@ const Index = () => {
             </CardBody>
             <CardFooter>
               <Button variant="solid" colorScheme="blue">
-                More Info
+                Trykk her
+              </Button>
+            </CardFooter>
+          </Stack>
+        </Link>
+      </Card>
+      <Card
+        direction={{ base: "column", sm: "row" }}
+        overflow="hidden"
+        variant="outline"
+      >
+        <Link
+          to="/AdminPage"
+          style={{
+            textDecoration: "none",
+            color: "inherit",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Image
+            objectFit="cover"
+            maxW={{ base: "100%", sm: "200px" }}
+            src={AdminLogo}
+            alt="Informasjon"
+          />
+          <Stack flex="1">
+            <CardBody>
+              <Heading size="md">Admin Dashboard</Heading>
+              <Text py="2">
+                Dette er en midlertidig knapp for å åpne Admin-siden. Dette vil
+                selvfølgelig lukkes bak en Admin-logg inn.
+              </Text>
+            </CardBody>
+            <CardFooter>
+              <Button variant="solid" colorScheme="blue">
+                Trykk her
               </Button>
             </CardFooter>
           </Stack>
