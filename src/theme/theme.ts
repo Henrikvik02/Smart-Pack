@@ -1,6 +1,5 @@
 import { extendTheme, StyleFunctionProps } from '@chakra-ui/react';
 
-
 const theme = extendTheme({
   colors: {
     customLightPurple: {
@@ -9,7 +8,7 @@ const theme = extendTheme({
       200: "#bf9fff",
       300: "#a57aff",
       400: "#8b54ff",
-      500: "#712fff",
+      500: "#8E6DFF",
       600: "#5816e5",
       700: "#4400b2",
       800: "#2f007f",
@@ -22,7 +21,7 @@ const theme = extendTheme({
     },
     customYellow: {
       500: '#FFFF10',
-      600: 'FFEB3B',
+      600: '#FFEB3B',
       700: '#6F1C5A',
       800: '#5A1749',
     },
@@ -39,10 +38,32 @@ const theme = extendTheme({
       700: '#4A5568',
     },
     customBlue: {
+      400: '#1E90FF',
       500: '#3182CE',
       600: '#2B6CB0',
       700: '#2C5282',
     },
+    customLightBlue: {
+      100: "#E0F7FA", // Light Blue 1
+      200: "#B3E5FC", // Light Blue 2
+      300: "#81D4FA", // Light Blue 3
+      400: "#4FC3F7", // Light Blue 4
+    },
+    customGreen: {
+      light: {
+        100: '#2E7D32', // Green 1 Light Mode
+        200: '#388E3C', // Green 2 Light Mode
+        300: '#43A047', // Green 3 Light Mode
+        400: '#4CAF50', // Green 4 Light Mode
+      },
+      dark: {
+        100: '#C8E6C9', // Green 1 Dark Mode
+        200: '#A5D6A7', // Green 2 Dark Mode
+        300: '#81C784', // Green 3 Dark Mode
+        400: '#66BB6A', // Green 4 Dark Mode
+        500: '#48BB78'
+      },
+    }
   },
   components: {
     Button: {
@@ -94,13 +115,14 @@ const theme = extendTheme({
             boxShadow: '0 0 0 3px #FFFF10',
           },
         },
-        solid: {
-          bg: 'customPurple.500',
+        main: {
+          bg: 'customBlue.400',
+          color: 'white',
           _hover: {
-            bg: 'customPurple.600',
+            bg: 'customBlue.600',
           },
           _active: {
-            bg: 'customPurple.700',
+            bg: 'customBlue.700',
           },
           _focus: {
             boxShadow: '0 0 0 3px #FFFF10',
@@ -137,32 +159,13 @@ const theme = extendTheme({
           color: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'white' : 'black'),
             bg: 'transparent',
           _hover: {
-            bg: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'customGray.400' : 'customGray.600'),
+            bg: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'customBlue.400' : 'customBlue.400'),
           },
           _active: {
-            bg: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'customGray.300' : 'customGray.700'),
+            bg: ({ colorMode }: StyleFunctionProps) => (colorMode === 'dark' ? 'customBlue.700' : 'customBlue.700'),
           },
           _focus: {
             boxShadow: '0 0 0 3px #FFFF10',
-          },
-        },
-      },
-    },
-    IconButton: {
-      baseStyle: {
-        color: 'white',
-      },
-      variants: {
-        solid: {
-          bg: 'customPurple.500',
-          _hover: {
-            bg: 'customPurple.600',
-          },
-          _active: {
-            bg: 'customPurple.700',
-          },
-          _focus: {
-            boxShadow: `0 0 0 3px #FFFF10`,
           },
         },
       },

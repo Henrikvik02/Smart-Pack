@@ -16,94 +16,78 @@ import useCategoryCRUD from "../../../hooks/useCategoriesCRUD";
 import { Rule } from "../../../services/object-service";
 
 const DisplayRule = () => {
-  const {
-    rules,
-    createRule,
-    updateRule,
-    deleteRule,
-    getRuleById,
-    fetchAllRules,
-    unlinkRuleFromItemWithRuleid,
-  } = useRulesCRUD();
+  const { rules, createRule, updateRule, deleteRule, getRuleById, fetchAllRules, unlinkRuleFromItemWithRuleid } = useRulesCRUD();
   const { categories } = useCategoryCRUD();
-  const {
-    isOpen: isCreateOpen,
-    onOpen: onCreateOpen,
-    onClose: onCreateClose,
-  } = useDisclosure();
-  const {
-    isOpen: isUpdateOpen,
-    onOpen: onUpdateOpen,
-    onClose: onUpdateClose,
-  } = useDisclosure();
-  const {
-    isOpen: isViewOpen,
-    onOpen: onViewOpen,
-    onClose: onViewClose,
-  } = useDisclosure();
+  const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
+  const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
+  const { isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose } = useDisclosure();
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
   const toast = useToast();
 
   useEffect(() => {
-    fetchAllRules();
+    fetchAllRules(); // Hent alle regler ved komponentens oppstart
   }, [fetchAllRules]);
 
+  // Legger til en ny regel
   const handleAddRule = () => {
     onCreateOpen();
   };
 
+  // Viser detaljer for en regel
   const handleViewRule = async (id: number) => {
     const rule = await getRuleById(id);
     if (rule) {
       const enrichedRule = {
         ...rule,
-        kategorinavn:
-          categories.find((cat) => cat.kategoriid === rule.kategoriid)
-            ?.kategorinavn || "Unknown Category",
+        kategorinavn: categories.find((cat) => cat.kategoriid === rule.kategoriid)?.kategorinavn || "Ukjent kategori",
       };
       setSelectedRule(enrichedRule);
       onViewOpen();
     } else {
-      alert("Rule not found");
+      toast({
+        title: "Feil",
+        description: "Regelen ble ikke funnet.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
+  // Starter oppdatering av en regel
   const handleEditRule = async (id: number) => {
     const rule = await getRuleById(id);
     if (rule) {
-      const enrichedRule = {
-        ...rule,
-        kategorinavn:
-          categories.find((cat) => cat.kategoriid === rule.kategoriid)
-            ?.kategorinavn || "Unknown Category",
-      };
-      setSelectedRule(enrichedRule);
+      setSelectedRule(rule);
       onUpdateOpen();
     } else {
-      alert("Rule not found for editing");
+      toast({
+        title: "Feil",
+        description: "Regelen for redigering ble ikke funnet.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
+  // Sletter en regel
   const handleDeleteRule = async (regelverkid: number) => {
-    if (window.confirm("Are you sure you want to delete this rule?")) {
+    if (confirm("Er du sikker på at du vil slette denne regelen?")) {
       try {
-        // Unlink the rule from items
         await unlinkRuleFromItemWithRuleid(regelverkid);
-        
-        // Delete the rule itself
         await deleteRule(regelverkid);
-        
         toast({
-          title: "Rule Deleted",
-          description: "Rule and its associations have been deleted successfully.",
+          title: "Regel slettet",
+          description: "Regelen og dens tilknytninger er vellykket slettet.",
           status: "success",
           duration: 5000,
           isClosable: true,
         });
       } catch (error) {
         toast({
-          title: "Deletion Error",
-          description: `Failed to delete the rule and its associations.`,
+          title: "Slettefeil",
+          description: `Det oppstod en feil ved sletting av regelen.`,
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -111,27 +95,23 @@ const DisplayRule = () => {
       }
     }
   };
-  
 
   return (
     <Container maxW="container.xl">
       <Box my={10}>
-        <Heading size="lg">Rules Dashboard</Heading>
+        <Heading size="lg">Regelverk Dashboard</Heading>
         <GenericList
           items={rules.map((rule) => ({
             id: rule.regelverkid,
-            name: `${rule.betingelse} - ${
-              categories.find((cat) => cat.kategoriid === rule.kategoriid)
-                ?.kategorinavn || "Unknown Category"
-            }`,
-            type: "rule", 
+            name: `${rule.betingelse} - ${categories.find((cat) => cat.kategoriid === rule.kategoriid)?.kategorinavn || "Ukjent kategori"}`,
+            type: "rule",
             subItems: [],
           }))}
           onAdd={handleAddRule}
           onEdit={handleEditRule}
           onDelete={handleDeleteRule}
           onView={handleViewRule}
-          title="Rules"
+          title="Regler"
         />
       </Box>
 

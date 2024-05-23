@@ -17,7 +17,6 @@ import {
   Select,
   IconButton,
   Box,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 import { Category, Rule } from "../../../services/object-service";
@@ -60,12 +59,13 @@ const CreateItem: React.FC<CreateItemProps> = ({
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
 
   useEffect(() => {
+    // Last inn regler for valgt kategori ved endring
     if (selectedKategoriId) {
       getRulesByCategoryId(selectedKategoriId)
         .then(setRules)
         .catch((error) => {
           toast({
-            title: "Error loading rules",
+            title: "Feil ved lasting av regler",
             description: error.message,
             status: "error",
             duration: 5000,
@@ -75,6 +75,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
     }
   }, [selectedKategoriId, getRulesByCategoryId, toast]);
 
+  // Håndterer opprettelsen av en ny gjenstand
   const handleCreate = async () => {
     if (gjenstandnavn && gjenstandbeskrivelse && selectedKategoriId != null) {
       try {
@@ -87,9 +88,8 @@ const CreateItem: React.FC<CreateItemProps> = ({
           selectedRuleIds
         );
         toast({
-          title: "Gjenstand opprettet.",
-          description:
-            "Ny gjenstand ble vellykket lagt til og koblet til regler.",
+          title: "Gjenstand opprettet",
+          description: "Ny gjenstand ble vellykket lagt til og koblet til regler.",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -97,8 +97,8 @@ const CreateItem: React.FC<CreateItemProps> = ({
         onClose();
       } catch (error) {
         toast({
-          title: "Creation Error",
-          description: "Det oppstod en feil under oppretting av gjenstanden.",
+          title: "Feil ved opprettelse",
+          description: "Det oppstod en feil under oppretting av gjenstanden. Vennligst prøv igjen.",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -106,9 +106,8 @@ const CreateItem: React.FC<CreateItemProps> = ({
       }
     } else {
       toast({
-        title: "Validation Error",
-        description:
-          "Please fill all required fields including category and select at least one rule.",
+        title: "Valideringsfeil",
+        description: "Vennligst fyll ut alle nødvendige felter og velg minst én regel.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -116,6 +115,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
     }
   };
 
+  // Vis detaljer for en spesifikk regel
   const handleViewDetails = (rule: Rule) => {
     setSelectedRule(rule);
     setIsRuleDetailsOpen(true);
@@ -130,11 +130,11 @@ const CreateItem: React.FC<CreateItemProps> = ({
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl isRequired>
-              <FormLabel>Navnet på gjenstanden</FormLabel>
+              <FormLabel>Navn på gjenstanden</FormLabel>
               <Input
                 value={gjenstandnavn}
                 onChange={(e) => setGjenstandnavn(e.target.value)}
-                placeholder="Enter item name"
+                placeholder="Skriv inn navnet på gjenstanden"
               />
             </FormControl>
             <FormControl mt={4} isRequired>
@@ -142,7 +142,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               <Input
                 value={gjenstandbeskrivelse}
                 onChange={(e) => setGjenstandbeskrivelse(e.target.value)}
-                placeholder="Enter item description"
+                placeholder="Skriv inn beskrivelse av gjenstanden"
               />
             </FormControl>
             <FormControl isRequired>
@@ -150,7 +150,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               <Select
                 value={selectedKategoriId ?? ""}
                 onChange={(e) => setSelectedKategoriId(Number(e.target.value))}
-                placeholder="Select category"
+                placeholder="Velg en kategori"
                 isReadOnly={initialCategoryId !== null} // Skrivebeskyttet hvis initialCategoryId er satt
               >
                 {categories.map((category) => (
@@ -161,7 +161,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               </Select>
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>TIlhørende regelverk</FormLabel>
+              <FormLabel>Regelverk</FormLabel>
               <Stack spacing={2}>
                 {rules.map((rule) => (
                   <Box
@@ -172,15 +172,10 @@ const CreateItem: React.FC<CreateItemProps> = ({
                     <IconButton
                       icon={<ViewIcon />}
                       onClick={() => handleViewDetails(rule)}
-                      aria-label="View details"
+                      aria-label="Vis detaljer"
                       variant="outline"
                       colorScheme="blue"
-                      _focus={{
-                        boxShadow: "0 0 0 3px #FFFF10",
-                      }}
                       size="sm"
-                      marginTop="1"
-                      marginLeft="1"
                       marginRight="4"
                     />
                     <Checkbox
@@ -188,16 +183,9 @@ const CreateItem: React.FC<CreateItemProps> = ({
                       onChange={(e) => {
                         const index = selectedRuleIds.indexOf(rule.regelverkid);
                         if (index === -1) {
-                          setSelectedRuleIds([
-                            ...selectedRuleIds,
-                            rule.regelverkid,
-                          ]);
+                          setSelectedRuleIds([...selectedRuleIds, rule.regelverkid]);
                         } else {
-                          setSelectedRuleIds(
-                            selectedRuleIds.filter(
-                              (id) => id !== rule.regelverkid
-                            )
-                          );
+                          setSelectedRuleIds(selectedRuleIds.filter(id => id !== rule.regelverkid));
                         }
                       }}
                     >
@@ -210,25 +198,25 @@ const CreateItem: React.FC<CreateItemProps> = ({
           </ModalBody>
           <ModalFooter>
             <Button
-              variant="outline"
+              variant="solid"
               colorScheme="green"
               _focus={{
                 boxShadow: "0 0 0 3px #FFFF10",
-              }}  
+              }}
               mr={3}
               onClick={handleCreate}
             >
               Lagre
             </Button>
             <Button
-              variant="outline"
+              variant="solid"
               colorScheme="red"
               _focus={{
                 boxShadow: "0 0 0 3px #FFFF10",
               }}
               onClick={onClose}
             >
-              Cancel
+              Avbryt
             </Button>
           </ModalFooter>
         </ModalContent>

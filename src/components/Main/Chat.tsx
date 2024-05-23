@@ -80,8 +80,6 @@ const Chat: FC = () => {
               placeholder="Skriv inn her..."
             />
             <div>
-              <img src={assets.gallery_icon} width={30} alt="" />
-              <img src={assets.mic_icon} width={30} alt="" />
               {input ? (
                 <img
                   onClick={() => onSent()}

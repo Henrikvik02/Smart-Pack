@@ -7,7 +7,7 @@ import {
   ModalCloseButton,
   ModalBody,
   Text,
-  useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 
 interface ReadCategoryProps {
@@ -16,12 +16,19 @@ interface ReadCategoryProps {
   category: { kategorinavn: string; kategoribeskrivelse: string; };
 }
 
+/**
+ * Komponent for å vise detaljer om en kategori.
+ * @param isOpen - Boolean som styrer om modalen er åpen.
+ * @param onClose - Funksjon som kalles for å lukke modalen.
+ * @param category - Objekt som inneholder informasjon om kategorien.
+ */
 const ReadCategory: React.FC<ReadCategoryProps> = ({ isOpen, onClose, category }) => {
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Detaljer på kategorien</ModalHeader>
+        <ModalHeader>Detaljer om Kategorien</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Text fontWeight="bold">Navn:</Text>

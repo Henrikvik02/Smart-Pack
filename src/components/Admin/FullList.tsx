@@ -1,9 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Box, Button, Heading, List, ListItem, IconButton, Collapse, useToast, useColorModeValue, VStack, HStack
-} from '@chakra-ui/react';
-import { DeleteIcon, EditIcon, ViewIcon, ChevronDownIcon, ChevronUpIcon, AddIcon } from '@chakra-ui/icons';
-import { Entity, Category } from '../../services/object-service';
+  Box,
+  Button,
+  Heading,
+  List,
+  ListItem,
+  IconButton,
+  Collapse,
+  useToast,
+  useColorModeValue,
+  VStack,
+  HStack,
+} from "@chakra-ui/react";
+import {
+  DeleteIcon,
+  EditIcon,
+  ViewIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  AddIcon,
+} from "@chakra-ui/icons";
+import { Entity, Category } from "../../services/object-service";
 
 interface GenericListProps {
   items: Entity[];
@@ -44,7 +61,7 @@ const FullList: React.FC<GenericListProps> = ({
 }) => {
   const [openIds, setOpenIds] = useState<Set<number>>(new Set());
   const toast = useToast();
-  const subListBgColor = useColorModeValue('customGray.300', 'customGray.600');
+  const subListBgColor = useColorModeValue("customGray.300", "customGray.600");
 
   const toggleSubList = (id: number, isCategory: boolean) => {
     const updatedOpenIds = new Set(openIds);
@@ -56,7 +73,9 @@ const FullList: React.FC<GenericListProps> = ({
     } else {
       updatedOpenIds.add(id);
       if (isCategory) {
-        const selected = items.find((category) => category.id === id) as Category;
+        const selected = items.find(
+          (category) => category.id === id
+        ) as Category;
         setSelectedCategory(selected);
       }
     }
@@ -64,14 +83,21 @@ const FullList: React.FC<GenericListProps> = ({
   };
 
   useEffect(() => {
-    console.log("Selected category updated:", selectedCategory);
   }, [selectedCategory]);
 
   return (
     <Box border="1px" borderColor="gray.200" p={4} borderRadius="md">
       <HStack justifyContent="space-between" alignItems="center" mb={4}>
         <Heading size="md">{title}</Heading>
-        <Button variant="primary" leftIcon={<AddIcon />} onClick={onAddCategory}>
+        <Button
+          variant="solid"
+          colorScheme="green"
+          _focus={{
+            boxShadow: "0 0 0 3px #FFFF10",
+          }}
+          leftIcon={<AddIcon />}
+          onClick={onAddCategory}
+        >
           Legg til Kategori
         </Button>
       </HStack>
@@ -80,24 +106,37 @@ const FullList: React.FC<GenericListProps> = ({
           <React.Fragment key={category.id}>
             <ListItem>
               <HStack justifyContent="space-between" alignItems="center">
-                <Box flex="1" onClick={() => {
-                  onViewCategory(category.id);
-                  setSelectedCategory(category as Category);
-                }}>
+                <Box
+                  flex="1"
+                  onClick={() => {
+                    onViewCategory(category.id);
+                    setSelectedCategory(category as Category);
+                  }}
+                >
                   {category.name}
                 </Box>
                 <HStack>
                   <IconButton
                     variant="primary"
                     aria-label="Expand Sublist"
-                    icon={openIds.has(category.id) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                    icon={
+                      openIds.has(category.id) ? (
+                        <ChevronUpIcon />
+                      ) : (
+                        <ChevronDownIcon />
+                      )
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleSubList(category.id, true);
                     }}
                   />
                   <IconButton
-                    variant="primary"
+                    variant="solid"
+                    colorScheme="blue"
+                    _focus={{
+                      boxShadow: "0 0 0 3px #FFFF10",
+                    }}
                     aria-label="View"
                     icon={<ViewIcon />}
                     onClick={(e) => {
@@ -107,7 +146,11 @@ const FullList: React.FC<GenericListProps> = ({
                     }}
                   />
                   <IconButton
-                    variant="primary"
+                    variant="solid"
+                    colorScheme="yellow"
+                    _focus={{
+                      boxShadow: "0 0 0 3px #FFFF10",
+                    }}
                     aria-label="Edit"
                     icon={<EditIcon />}
                     onClick={(e) => {
@@ -117,7 +160,11 @@ const FullList: React.FC<GenericListProps> = ({
                     }}
                   />
                   <IconButton
-                    variant="primary"
+                    variant="solid"
+                    colorScheme="red"
+                    _focus={{
+                      boxShadow: "0 0 0 3px #FFFF10",
+                    }}
                     aria-label="Delete"
                     icon={<DeleteIcon />}
                     onClick={(e) => {
@@ -141,12 +188,18 @@ const FullList: React.FC<GenericListProps> = ({
                   align="stretch"
                 >
                   <Heading size="sm" display="flex" alignItems="center">
-                    Regelverk for {category.name}
+                    Regelverk for {category.name}:
                     <IconButton
                       variant="secondary"
                       ml={2}
                       size="sm"
-                      icon={openIds.has(category.id + 1000) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                      icon={
+                        openIds.has(category.id + 1000) ? (
+                          <ChevronUpIcon />
+                        ) : (
+                          <ChevronDownIcon />
+                        )
+                      }
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleSubList(category.id + 1000, false);
@@ -154,7 +207,11 @@ const FullList: React.FC<GenericListProps> = ({
                       aria-label="Expand Rules"
                     />
                     <Button
-                      variant="secondary"
+                      variant="solid"
+                      colorScheme="green"
+                      _focus={{
+                        boxShadow: "0 0 0 3px #FFFF10",
+                      }}
                       ml={2}
                       leftIcon={<AddIcon />}
                       size="sm"
@@ -165,53 +222,77 @@ const FullList: React.FC<GenericListProps> = ({
                   </Heading>
                   <Collapse in={openIds.has(category.id + 1000)} animateOpacity>
                     <List spacing={3} mt={3}>
-                      {category.subItems.filter(item => item.type === 'rule').map((rule) => (
-                        <ListItem key={rule.id}>
-                          <HStack justifyContent="space-between" alignItems="center">
-                            <Box flex="1" onClick={() => onViewRule(rule.id)}>
-                              {rule.name}
-                            </Box>
-                            <HStack>
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="View"
-                                icon={<ViewIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onViewRule(rule.id);
-                                }}
-                              />
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="Edit"
-                                icon={<EditIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onEditRule(rule.id);
-                                }}
-                              />
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="Delete"
-                                icon={<DeleteIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onDeleteRule(rule.id);
-                                }}
-                              />
+                      {category.subItems
+                        .filter((item) => item.type === "rule")
+                        .map((rule) => (
+                          <ListItem key={rule.id}>
+                            <HStack
+                              justifyContent="space-between"
+                              alignItems="center"
+                            >
+                              <Box flex="1">{rule.name}</Box>
+                              <HStack>
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="blue"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="View"
+                                  icon={<ViewIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onViewRule(rule.id);
+                                  }}
+                                />
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="yellow"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="Edit"
+                                  icon={<EditIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEditRule(rule.id);
+                                  }}
+                                />
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="red"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="Delete"
+                                  icon={<DeleteIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeleteRule(rule.id);
+                                  }}
+                                />
+                              </HStack>
                             </HStack>
-                          </HStack>
-                        </ListItem>
-                      ))}
+                          </ListItem>
+                        ))}
                     </List>
                   </Collapse>
                   <Heading size="sm" display="flex" alignItems="center">
-                    Gjenstander for {category.name}
+                    Gjenstander for {category.name}:
                     <IconButton
                       variant="secondary"
                       ml={2}
                       size="sm"
-                      icon={openIds.has(category.id + 2000) ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                      _focus={{
+                        boxShadow: "0 0 0 3px #FFFF10",
+                      }}
+                      icon={
+                        openIds.has(category.id + 2000) ? (
+                          <ChevronUpIcon />
+                        ) : (
+                          <ChevronDownIcon />
+                        )
+                      }
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleSubList(category.id + 2000, false);
@@ -219,55 +300,74 @@ const FullList: React.FC<GenericListProps> = ({
                       aria-label="Expand Items"
                     />
                     <Button
-                      variant="secondary"
+                      variant="solid"
+                      colorScheme="green"
+                      _focus={{
+                        boxShadow: "0 0 0 3px #FFFF10",
+                      }}
                       ml={2}
                       leftIcon={<AddIcon />}
                       size="sm"
                       onClick={() => onAddItem(category.id)}
                     >
-                      Legg til Element
+                      Legg til Gjenstand
                     </Button>
                   </Heading>
                   <Collapse in={openIds.has(category.id + 2000)} animateOpacity>
                     <List spacing={3} mt={3}>
-                      {category.subItems.filter(item => item.type === 'item').map((item) => (
-                        <ListItem key={item.id}>
-                          <HStack justifyContent="space-between" alignItems="center">
-                            <Box flex="1" onClick={() => onViewItem(item.id)}>
-                              {item.name}
-                            </Box>
-                            <HStack>
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="View"
-                                icon={<ViewIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onViewItem(item.id);
-                                }}
-                              />
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="Edit"
-                                icon={<EditIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onEditItem(item.id);
-                                }}
-                              />
-                              <IconButton
-                                variant="tertiary"
-                                aria-label="Delete"
-                                icon={<DeleteIcon />}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onDeleteItem(item.id);
-                                }}
-                              />
+                      {category.subItems
+                        .filter((item) => item.type === "item")
+                        .map((item) => (
+                          <ListItem key={item.id}>
+                            <HStack
+                              justifyContent="space-between"
+                              alignItems="center"
+                            >
+                              <Box flex="1">{item.name}</Box>
+                              <HStack>
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="blue"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="View"
+                                  icon={<ViewIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onViewItem(item.id);
+                                  }}
+                                />
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="yellow"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="Edit"
+                                  icon={<EditIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onEditItem(item.id);
+                                  }}
+                                />
+                                <IconButton
+                                  variant="outline"
+                                  colorScheme="red"
+                                  _focus={{
+                                    boxShadow: "0 0 0 3px #FFFF10",
+                                  }}
+                                  aria-label="Delete"
+                                  icon={<DeleteIcon />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeleteItem(item.id);
+                                  }}
+                                />
+                              </HStack>
                             </HStack>
-                          </HStack>
-                        </ListItem>
-                      ))}
+                          </ListItem>
+                        ))}
                     </List>
                   </Collapse>
                 </VStack>

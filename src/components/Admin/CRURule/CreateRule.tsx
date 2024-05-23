@@ -14,18 +14,22 @@ import {
   Switch,
   Select,
   useToast,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { CreateRule, Category } from "../../../services/object-service";
 
 interface CreateRuleProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (ruleData: CreateRule) => void;
+  onCreate: (ruleData: CreateRule) => Promise<void>;
   categories: Category[];
   selectedCategoryId?: number;
 }
 
+/**
+ * Komponent for å opprette nye regler.
+ * Lar brukeren legge til regler med spesifikke betingelser og verdier.
+ * Integrerer med et gitt sett av kategorier for tilknytning.
+ */
 const CreateRuleComponent: React.FC<CreateRuleProps> = ({
   isOpen,
   onClose,
@@ -37,8 +41,7 @@ const CreateRuleComponent: React.FC<CreateRuleProps> = ({
   const [betingelse, setBetingelse] = useState("");
   const [verdi, setVerdi] = useState("");
   const [tillatthandbagasje, setTillatthandbagasje] = useState(false);
-  const [tillattinnsjekketbagasje, setTillattinnsjekketbagasje] =
-    useState(false);
+  const [tillattinnsjekketbagasje, setTillattinnsjekketbagasje] = useState(false);
   const [regelverkbeskrivelse, setRegelverkbeskrivelse] = useState("");
   const toast = useToast();
 
@@ -46,25 +49,35 @@ const CreateRuleComponent: React.FC<CreateRuleProps> = ({
     if (selectedCategoryId) {
       setKategoriid(selectedCategoryId);
     }
-  }, [selectedCategoryId, isOpen]);
+  }, [selectedCategoryId]);
 
-  const handleCreate = () => {
-    onCreate({
-      kategoriid,
-      betingelse,
-      verdi,
-      tillatthandbagasje,
-      tillattinnsjekketbagasje,
-      regelverkbeskrivelse,
-    });
-    toast({
-      title: "Rule Created",
-      description: "A new rule has been successfully created.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
-    onClose();
+  const handleCreate = async () => {
+    try {
+      await onCreate({
+        kategoriid,
+        betingelse,
+        verdi,
+        tillatthandbagasje,
+        tillattinnsjekketbagasje,
+        regelverkbeskrivelse,
+      });
+      toast({
+        title: "Regel opprettet",
+        description: "En ny regel ble vellykket opprettet.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Feil ved oppretting av regel",
+        description: "Det oppstod en feil under oppretting av regelen.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -77,7 +90,7 @@ const CreateRuleComponent: React.FC<CreateRuleProps> = ({
           <FormControl isRequired>
             <FormLabel>Kategori</FormLabel>
             <Select
-              placeholder="Select a category"
+              placeholder="Velg en kategori"
               value={kategoriid}
               onChange={(e) => setKategoriid(Number(e.target.value))}
             >
@@ -89,43 +102,41 @@ const CreateRuleComponent: React.FC<CreateRuleProps> = ({
             </Select>
           </FormControl>
           <FormControl mt={4} isRequired>
-            <FormLabel>Betingelsen på regelverket</FormLabel>
+            <FormLabel>Betingelsen</FormLabel>
             <Input
               value={betingelse}
               onChange={(e) => setBetingelse(e.target.value)}
-              placeholder="Enter condition"
+              placeholder="Angi betingelsen"
             />
           </FormControl>
           <FormControl mt={4} isRequired>
-            <FormLabel>Verdien av betingelsen</FormLabel>
+            <FormLabel>Verdi</FormLabel>
             <Input
               value={verdi}
               onChange={(e) => setVerdi(e.target.value)}
-              placeholder="Enter value"
+              placeholder="Angi verdi"
             />
           </FormControl>
           <FormControl mt={4} display="flex" alignItems="center">
-            <FormLabel mb={0}>Tillat i handbaggasje</FormLabel>
+            <FormLabel mb={0}>Tillatt i håndbagasje</FormLabel>
             <Switch
               isChecked={tillatthandbagasje}
               onChange={(e) => setTillatthandbagasje(e.target.checked)}
-              ml={2}
             />
           </FormControl>
           <FormControl mt={4} display="flex" alignItems="center">
-            <FormLabel mb={0}>Tillatt i innsjekketbaggasje</FormLabel>
+            <FormLabel mb={0}>Tillatt i innsjekket bagasje</FormLabel>
             <Switch
               isChecked={tillattinnsjekketbagasje}
               onChange={(e) => setTillattinnsjekketbagasje(e.target.checked)}
-              ml={2}
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Beskrivelse av regelverket</FormLabel>
+            <FormLabel>Regelbeskrivelse</FormLabel>
             <Input
               value={regelverkbeskrivelse}
               onChange={(e) => setRegelverkbeskrivelse(e.target.value)}
-              placeholder="Enter rule description"
+              placeholder="Angi regelbeskrivelse"
             />
           </FormControl>
         </ModalBody>

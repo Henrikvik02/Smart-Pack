@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -11,7 +11,7 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 
 interface UpdateCategoryProps {
@@ -28,6 +28,15 @@ interface UpdateCategoryProps {
   };
 }
 
+/**
+ * Komponent for å oppdatere en kategori.
+ * Gir brukeren mulighet til å endre navn og beskrivelse på en eksisterende kategori.
+ * 
+ * @param isOpen - Boolean som styrer om modalen er åpen.
+ * @param onClose - Funksjon som kalles for å lukke modalen.
+ * @param onUpdate - Funksjon som oppdaterer kategorien i databasen.
+ * @param category - Objekt som inneholder kategoriens nåværende data.
+ */
 const UpdateCategory: React.FC<UpdateCategoryProps> = ({
   isOpen,
   onClose,
@@ -38,17 +47,42 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
   const [kategoribeskrivelse, setKategoribeskrivelse] = useState(
     category.kategoribeskrivelse
   );
+  const toast = useToast();
 
-  const handleUpdate = () => {
-    onUpdate(category.kategoriid, { kategorinavn, kategoribeskrivelse });
-    onClose();
-  };
+  // Effekt for å oppdatere komponentens tilstand når `category` endres.
+  useEffect(() => {
+    setKategorinavn(category.kategorinavn);
+    setKategoribeskrivelse(category.kategoribeskrivelse);
+  }, [category]);
+
+  const handleUpdate = async () => {
+    try {
+      await onUpdate(category.kategoriid, { kategorinavn, kategoribeskrivelse });
+      toast({
+        title: "Kategori Oppdatert",
+        description: "Kategorien ble vellykket oppdatert.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      // Feilhåndtering med toast melding
+      toast({
+        title: "Oppdateringsfeil",
+        description: "Det oppstod en feil under oppdatering av kategorien. Prøv igjen senere.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Oppdater kategori</ModalHeader>
+        <ModalHeader>Oppdater Kategori</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl>
@@ -56,6 +90,7 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
             <Input
               value={kategorinavn}
               onChange={(e) => setKategorinavn(e.target.value)}
+              placeholder="Skriv inn nytt navn"
             />
           </FormControl>
 
@@ -64,14 +99,15 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
             <Input
               value={kategoribeskrivelse}
               onChange={(e) => setKategoribeskrivelse(e.target.value)}
+              placeholder="Skriv inn ny beskrivelse"
             />
           </FormControl>
         </ModalBody>
 
         <ModalFooter>
           <Button
-            variant="outline"
-            colorScheme="yellow"
+            variant="solid"
+            colorScheme="green"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
             }}
@@ -80,14 +116,11 @@ const UpdateCategory: React.FC<UpdateCategoryProps> = ({
           >
             Oppdater
           </Button>
-          <Button
-            variant="outline"
+          <Button variant="solid"
             colorScheme="red"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
-            }}
-            onClick={onClose}
-          >
+            }} onClick={onClose}>
             Avbryt
           </Button>
         </ModalFooter>

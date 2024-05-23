@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -13,6 +13,7 @@ import {
   Input,
   Switch,
   Select,
+  useToast
 } from "@chakra-ui/react";
 import { Category } from "../../../services/object-service";
 
@@ -29,7 +30,7 @@ interface UpdateRuleProps {
       tillattinnsjekketbagasje: boolean;
       regelverkbeskrivelse: string;
     }
-  ) => void;
+  ) => Promise<void>;
   rule: {
     regelverkid: number;
     kategoriid: number;
@@ -52,33 +53,46 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({
   const [kategoriid, setKategoriid] = useState<number>(rule.kategoriid);
   const [betingelse, setBetingelse] = useState(rule.betingelse);
   const [verdi, setVerdi] = useState(rule.verdi);
-  const [tillatthandbagasje, setTillatthandbagasje] = useState(
-    rule.tillatthandbagasje
-  );
-  const [tillattinnsjekketbagasje, setTillattinnsjekketbagasje] = useState(
-    rule.tillattinnsjekketbagasje
-  );
-  const [regelverkbeskrivelse, setRegelverkbeskrivelse] = useState(
-    rule.regelverkbeskrivelse
-  );
+  const [tillatthandbagasje, setTillatthandbagasje] = useState(rule.tillatthandbagasje);
+  const [tillattinnsjekketbagasje, setTillattinnsjekketbagasje] = useState(rule.tillattinnsjekketbagasje);
+  const [regelverkbeskrivelse, setRegelverkbeskrivelse] = useState(rule.regelverkbeskrivelse);
+  const toast = useToast();
 
-  const handleUpdate = () => {
-    onUpdate(rule.regelverkid, {
-      kategoriid,
-      betingelse,
-      verdi,
-      tillatthandbagasje,
-      tillattinnsjekketbagasje,
-      regelverkbeskrivelse,
-    });
-    onClose();
+  // Funksjon for å håndtere oppdateringen av et regelverk
+  const handleUpdate = async () => {
+    try {
+      await onUpdate(rule.regelverkid, {
+        kategoriid,
+        betingelse,
+        verdi,
+        tillatthandbagasje,
+        tillattinnsjekketbagasje,
+        regelverkbeskrivelse,
+      });
+      toast({
+        title: "Regelverk oppdatert",
+        description: "Regelverket er vellykket oppdatert.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Feil under oppdatering",
+        description: "Det oppstod en feil under oppdateringen av regelverket.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Oppdater Regelverket</ModalHeader>
+        <ModalHeader>Oppdater Regelverk</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl isRequired>
@@ -87,9 +101,9 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({
               value={kategoriid}
               onChange={(e) => setKategoriid(Number(e.target.value))}
             >
-              {categories.map((cat) => (
-                <option key={cat.kategoriid} value={cat.kategoriid}>
-                  {cat.kategorinavn}
+              {categories.map((category) => (
+                <option key={category.kategoriid} value={category.kategoriid}>
+                  {category.kategorinavn}
                 </option>
               ))}
             </Select>
@@ -102,18 +116,18 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({
             />
           </FormControl>
           <FormControl mt={4} isRequired>
-            <FormLabel>Verdi på betingelsen</FormLabel>
+            <FormLabel>Verdi</FormLabel>
             <Input value={verdi} onChange={(e) => setVerdi(e.target.value)} />
           </FormControl>
           <FormControl mt={4} display="flex" alignItems="center">
-            <FormLabel mb={0}>Tillat i handbaggasje</FormLabel>
+            <FormLabel mb={0}>Tillatt i håndbagasje</FormLabel>
             <Switch
               isChecked={tillatthandbagasje}
               onChange={(e) => setTillatthandbagasje(e.target.checked)}
             />
           </FormControl>
           <FormControl mt={4} display="flex" alignItems="center">
-            <FormLabel mb={0}>Tillat i handbaggasje</FormLabel>
+            <FormLabel mb={0}>Tillatt i innsjekket bagasje</FormLabel>
             <Switch
               isChecked={tillattinnsjekketbagasje}
               onChange={(e) => setTillattinnsjekketbagasje(e.target.checked)}
@@ -129,8 +143,8 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({
         </ModalBody>
         <ModalFooter>
           <Button
-            variant="outline"
-            colorScheme="yellow"
+            variant="solid"
+            colorScheme="green"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
             }}
@@ -140,12 +154,11 @@ const UpdateRule: React.FC<UpdateRuleProps> = ({
             Oppdater
           </Button>
           <Button
-            variant="outline"
+            variant="solid"
             colorScheme="red"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
             }}
-            mr={3}
             onClick={onClose}
           >
             Avbryt

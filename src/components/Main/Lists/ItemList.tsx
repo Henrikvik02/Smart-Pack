@@ -74,7 +74,7 @@ const ItemList = ({ kategoriid }: ItemListProps) => {
                       )
                     }
                     onClick={() => toggleDetails(gjenstand.gjenstandid)}
-                    variant="solid"
+                    variant="main"
                     className="details-button"
                   />
                 </Td>

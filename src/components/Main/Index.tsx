@@ -35,6 +35,7 @@ const Index = () => {
           <Image
             objectFit="cover"
             maxW={{ base: "100%", sm: "200px" }}
+            sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 25vw"
             src={smartpackSketch}
             alt="Admin"
           />
@@ -48,7 +49,13 @@ const Index = () => {
               </Text>
             </CardBody>
             <CardFooter>
-              <Button variant="solid" colorScheme="blue">
+              <Button
+                variant="solid"
+                _focus={{
+                  boxShadow: "0 0 0 3px #FFFF10",
+                }}
+                colorScheme="blue"
+              >
                 Trykk her
               </Button>
             </CardFooter>
@@ -84,7 +91,13 @@ const Index = () => {
               </Text>
             </CardBody>
             <CardFooter>
-              <Button variant="solid" colorScheme="blue">
+              <Button
+                variant="solid"
+                _focus={{
+                  boxShadow: "0 0 0 3px #FFFF10",
+                }}
+                colorScheme="blue"
+              >
                 Trykk her
               </Button>
             </CardFooter>
@@ -120,7 +133,13 @@ const Index = () => {
               </Text>
             </CardBody>
             <CardFooter>
-              <Button variant="solid" colorScheme="blue">
+              <Button
+                variant="solid"
+                colorScheme="blue"
+                _focus={{
+                  boxShadow: "0 0 0 3px #FFFF10",
+                }}
+              >
                 Trykk her
               </Button>
             </CardFooter>

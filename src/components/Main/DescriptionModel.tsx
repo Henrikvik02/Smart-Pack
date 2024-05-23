@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -9,7 +8,6 @@ import {
   Button,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Rule } from "../../services/object-service";
 
 interface DescriptionProps {
   regelverkbeskrivelse: string | null;

@@ -65,6 +65,7 @@ const DisplayItem = () => {
     loadAllItems();
   }, []);
 
+  //Håndterer lesing av gjenstand 
   const handleViewItem = async (id: number) => {
     const item = await readItem(id);
     if (item) {
@@ -76,8 +77,8 @@ const DisplayItem = () => {
           } else {
             setItemRules([]); // Setter tom liste om det ikke er regler
             toast({
-              title: "Info",
-              description: "No rules found for this item.",
+              title: "Feil",
+              description: "Ingen regler var funnet for denne gjenstanden.",
               status: "info",
               duration: 5000,
               isClosable: true,
@@ -86,8 +87,8 @@ const DisplayItem = () => {
         })
         .catch((error) => {
           toast({
-            title: "Error loading rules",
-            description: error.message || "Unable to fetch rules.",
+            title: "Feil med lasting av regler",
+            description: error.message || "Feil på henting regler.",
             status: "error",
             duration: 5000,
             isClosable: true,
@@ -97,8 +98,8 @@ const DisplayItem = () => {
       onViewOpen();
     } else {
       toast({
-        title: "Error",
-        description: "Item not found",
+        title: "Feil",
+        description: "Gjenstand ikke funne",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -114,6 +115,7 @@ const DisplayItem = () => {
     onCreateOpen();
   };
 
+  // Håndterer oppdatering av gjenstand
   const handleUpdateItem = async (
     id: number,
     itemData: {
@@ -138,36 +140,21 @@ const DisplayItem = () => {
         });
       });
       await Promise.all(linkPromises);
-  
-      toast({
-        title: "Item Updated",
-        description: "Item and rules updated successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      onUpdateClose(); // Lukker update-modalen etter vellykket operasjon
+      onUpdateClose();
     } catch (error) {
-      toast({
-        title: "Update Error",
-        description: `Update failed:`,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
     }
   };
   
-
+  // Håndterer oppdatering av en gjenstand
   const handleEdit = (id: number) => {
     const currentItem = items.find((item) => item.gjenstandid === id);
     if (currentItem) {
       setSelectedItem(currentItem);
-      onOpenUpdateModal(); // Correctly invoke to open the update modal
+      onOpenUpdateModal(); 
     } else {
       toast({
-        title: "Error",
-        description: "Item not found",
+        title: "Feil",
+        description: "Gjenstanden ble ikke funnet",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -175,36 +162,36 @@ const DisplayItem = () => {
     }
   };
 
-  
+  // Håndterer sletting av en gjenstand med en bekreftelsesdialog via Toast
   const handleDeleteItem = async (id: number) => {
-    if (window.confirm("Are you sure you want to delete this item and all its rules?")) {
-      try {
-        console.log(`Starting to unlink all rules from item ID: ${id}`);
-        await unlinkRuleFromItemWithItemid(id);
-        console.log(`All rules unlinked for item ID: ${id}`);
-  
-        console.log(`Starting to delete item ID: ${id}`);
-        await deleteItem(id);
-        console.log(`Item ID: ${id} deleted`);
-  
-        toast({
-          title: "Item Deleted",
-          description: "Item and all associated rules have been successfully deleted.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      } catch (error) {
-        console.error(`Failed to delete item ID: ${id}`, error);
-        toast({
-          title: "Deletion Error",
-          description: `Failed to delete the item and its rules`,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+    toast({
+      title: "Er du sikker på at du vil slette denne gjenstanden og alle dens regler?",
+      status: "warning",
+      duration: null,
+      isClosable: true,
+      position: "top",
+      onCloseComplete: async () => {
+        try {
+          await unlinkRuleFromItemWithItemid(id);
+          await deleteItem(id);
+          toast({
+            title: "Gjenstand slettet",
+            description: "Gjenstanden og alle tilknyttede regler har blitt slettet.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Slettefeil",
+            description: "Det oppstod en feil ved sletting av gjenstanden.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       }
-    }
+    });
   };
   
   

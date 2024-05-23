@@ -136,7 +136,6 @@ const DisplayAll = () => {
 
   const handleViewCategory = async (kategoriid: number) => {
     const category = await fetchCategory(kategoriid);
-    console.log("Fetched category:", category);
     setSelectedCategory(category);
     onViewCategoryOpen();
   };
@@ -148,10 +147,34 @@ const DisplayAll = () => {
   };
 
   const handleDeleteCategory = async (kategoriid: number) => {
-    if (window.confirm("Er du sikker på at du vil slette denne kategorien?")) {
-      await deleteCategory(kategoriid);
-      alert("Category deleted successfully");
-    }
+    toast({
+      title: "Er du sikker?",
+      description: "Vil du virkelig slette denne kategorien?",
+      status: "warning",
+      duration: null,
+      isClosable: true,
+      position: "top",
+      onCloseComplete: async () => {
+        try {
+          await deleteCategory(kategoriid);
+          toast({
+            title: "Kategori slettet",
+            description: "Kategorien ble slettet.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Feil ved sletting",
+            description: "Det skjedde en feil under slettingen av kategorien.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      },
+    });
   };
 
   const handleViewItem = async (id: number) => {
@@ -196,10 +219,8 @@ const DisplayAll = () => {
   };
 
   const handleAddItem = async (selectedCategoryId: number) => {
-    console.log("Attempting to add item to category ID:", selectedCategoryId);
     if (selectedCategoryId) {
       const rules = await getRulesByCategoryId(selectedCategoryId);
-      console.log("Fetched rules for category:", rules);
       setCategoryRules(rules);
     }
     onCreateItemOpen();
@@ -209,7 +230,7 @@ const DisplayAll = () => {
     const currentItem = items.find((item) => item.gjenstandid === id);
     if (currentItem) {
       setSelectedItem(currentItem);
-      onOpenUpdateModal(); // Correctly invoke to open the update modal
+      onOpenUpdateModal(); 
     } else {
       toast({
         title: "Error",
@@ -253,7 +274,7 @@ const DisplayAll = () => {
         duration: 5000,
         isClosable: true,
       });
-      onUpdateClose(); // Lukker update-modalen etter vellykket operasjon
+      onUpdateClose();
     } catch (error) {
       toast({
         title: "Update Error",

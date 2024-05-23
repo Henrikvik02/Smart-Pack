@@ -69,11 +69,17 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
     }
     getRulesByItemId(item.gjenstandid)
       .then((rules) => {
-        const ruleIds = rules.map((rule) => rule.regelverkid); // Transform Rule[] to number[]
+        const ruleIds = rules.map((rule) => rule.regelverkid);
         setSelectedRuleIds(ruleIds);
       })
       .catch((error) => {
-        console.error("Failed to fetch rules for item:", error);
+        toast({
+          title: "Feil ved henting av regler",
+          description: "Det oppstod en feil under henting av regler for gjenstanden.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
         setSelectedRuleIds([]);
       });
   }, [
@@ -84,7 +90,6 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
   ]);
 
   const handleViewDetails = (rule: Rule) => {
-    console.log("Viewing details for rule:", rule); // Check if this logs when you click the icon
     setSelectedRule(rule);
     setIsRuleDetailsOpen(true);
   };
@@ -94,7 +99,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
     try {
       await unlinkRuleFromItemWithItemid(item.gjenstandid);
       toast({
-        title: "Rules Unlinked",
+        title: "Regelverkene er fra koblet",
         description: "All rules have been unlinked from the item.",
         status: "info",
         duration: 5000,
@@ -108,10 +113,9 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
       const newRules = await getRulesByCategoryId(selectedKategoriId);
       setRules(newRules);
     } catch (error) {
-      console.error("Failed to unlink rules for item:", error);
       toast({
-        title: "Unlink Error",
-        description: "There was an error unlinking the rules.",
+        title: "Frakobling mislyktes",
+        description: "Der var en feil i avkobling av regelverk(ene).",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -131,8 +135,8 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
       await onUpdate(updatedItemData, selectedRuleIds);
 
       toast({
-        title: "Item Updated",
-        description: "Item has been successfully updated.",
+        title: "Gjenstand oppdatert",
+        description: "Gjenstand har vellykket fullført oppdateringen.",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -140,8 +144,8 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
       onClose();
     } catch (error) {
       toast({
-        title: "Update Error",
-        description: "There was an error updating the item.",
+        title: "Gjenstand oppdaterings error",
+        description: "Der var en feik ned oppdateringen av gjenstanden.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -149,12 +153,10 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
     }
   };
 
-  const modalBg = useColorModeValue("gray.50", "gray.800");
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent bg={modalBg}>
+      <ModalContent>
         <ModalHeader>Oppdater gjenstand</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
@@ -251,8 +253,8 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
         </ModalBody>
         <ModalFooter>
           <Button
-            variant="outline"
-            colorScheme="yellow"
+            variant="solid"
+            colorScheme="green"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
             }}
@@ -262,7 +264,7 @@ const UpdateItem: React.FC<UpdateItemProps> = ({
             Oppdater
           </Button>
           <Button
-            variant="outline"
+            variant="solid"
             colorScheme="red"
             _focus={{
               boxShadow: "0 0 0 3px #FFFF10",
