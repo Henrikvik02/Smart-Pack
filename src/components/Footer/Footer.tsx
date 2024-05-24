@@ -1,10 +1,11 @@
 import React from 'react';
 import { Box, Container, Text, VStack, HStack, Link, Divider } from '@chakra-ui/react';
 import { EmailIcon, PhoneIcon } from '@chakra-ui/icons';
+import ColorModeSwitch from "../ColorModeSwitch";
 
 const Footer = () => {
   return (
-    <Box as="footer" bg="gray.200" color="gray.700" py="5">
+    <Box as="footer" py="5">
       <Container maxW="container.xl">
         <VStack spacing="5">
           <Divider />
