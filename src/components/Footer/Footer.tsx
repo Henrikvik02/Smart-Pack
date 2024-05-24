@@ -1,7 +1,5 @@
-import React from 'react';
 import { Box, Container, Text, VStack, HStack, Link, Divider } from '@chakra-ui/react';
 import { EmailIcon, PhoneIcon } from '@chakra-ui/icons';
-import ColorModeSwitch from "../ColorModeSwitch";
 
 const Footer = () => {
   return (
