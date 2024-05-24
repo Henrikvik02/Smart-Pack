@@ -44,7 +44,7 @@ const Index = () => {
               <Heading size="md">SmartPack</Heading>
               <Text py="2">
                 Lurer du på noe angående bagasje? Hvor mye væske kan jeg ta med?
-                Får jeg hesten min gjennom bagasjebåndet? Spør vår chatbot
+                Spør vår chatbot
                 SmartPack!
               </Text>
             </CardBody>
